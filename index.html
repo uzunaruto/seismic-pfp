@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seismic PFP Generator</title>
+<meta name="description" content="Forge your Seismic identity. Layer traits, customize, export.">
+<meta property="og:title" content="Seismic PFP Generator">
+<meta property="og:description" content="Forge your Seismic identity.">
+<meta property="og:image" content="https://pfp.seismic.website/logo.svg">
+<link rel="icon" href="https://pfp.seismic.website/logo.svg">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#060504;--bg2:#0c0a08;--bg3:#13100d;--bg4:#1a1612;
+  --text:#f5f0e8;--text2:#8a7d6d;--text3:#5a5048;--text4:#3a3430;
+  --accent:#C19200;--accent2:#ffd866;--accent3:#A87504;
+  --copper:#A87504;--copper2:#c49a30;
+  --glass:rgba(12,10,8,.85);--glass2:rgba(20,16,12,.9);
+  --border:rgba(193,146,0,.12);--border2:rgba(245,240,232,.06);
+  --radius:16px;--radius-sm:10px;--radius-xs:8px;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);
+  min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(193,146,0,.3);color:var(--text)}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--text4);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+
+/* ============ BACKGROUND ============ */
+.bg-fx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-orb{position:absolute;border-radius:50%;filter:blur(120px);will-change:transform}
+.bg-orb-1{width:800px;height:800px;background:radial-gradient(circle,rgba(193,146,0,.08) 0%,transparent 70%);top:-300px;left:-200px;animation:drift 25s infinite ease-in-out}
+.bg-orb-2{width:500px;height:500px;background:radial-gradient(circle,rgba(6,147,205,.05) 0%,transparent 70%);bottom:-200px;right:-150px;animation:drift 30s infinite ease-in-out reverse}
+.bg-orb-3{width:400px;height:400px;background:radial-gradient(circle,rgba(156,21,21,.04) 0%,transparent 70%);top:40%;left:60%;animation:drift 20s infinite ease-in-out 5s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,-40px) scale(1.08)}66%{transform:translate(-40px,60px) scale(.92)}}
+.bg-grid{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(193,146,0,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(193,146,0,.025) 1px,transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,black 30%,transparent 100%);
+}
+.bg-noise{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* ============ NAV ============ */
+.nav{
+  position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:100;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:12px 24px;width:min(92%,1100px);
+  background:var(--glass2);backdrop-filter:blur(40px) saturate(1.5);
+  border:1px solid var(--border);border-radius:60px;
+  box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 0 1px rgba(245,240,232,.02) inset;
+}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}
+.nav-logo{width:36px;height:36px;border-radius:50%;object-fit:contain;
+  filter:drop-shadow(0 0 8px rgba(193,146,0,.3));border:2px solid var(--border);
+  background:var(--bg3);
+}
+.nav-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;
+  letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.nav-sub{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-top:1px}
+.nav-links{display:flex;gap:6px;align-items:center}
+.nav-link{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:50px;font-size:12px;font-weight:600;
+  color:var(--text2);text-decoration:none;letter-spacing:.5px;
+  border:1px solid var(--border2);transition:all .25s;white-space:nowrap;
+}
+.nav-link:hover{color:var(--text);border-color:var(--border);background:rgba(193,146,0,.04)}
+.nav-link svg{width:14px;height:14px;fill:currentColor}
+
+/* ============ HERO ============ */
+.hero{
+  text-align:center;padding:100px 24px 32px;position:relative;z-index:1;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 18px;border-radius:50px;
+  background:rgba(193,146,0,.06);border:1px solid var(--border);
+  font-size:11px;font-weight:700;color:var(--accent);letter-spacing:2px;
+  text-transform:uppercase;margin-bottom:16px;
+}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);
+  animation:glow-pulse 2s infinite;
+}
+@keyframes glow-pulse{0%,100%{opacity:1;box-shadow:0 0 4px var(--accent)}50%{opacity:.5;box-shadow:0 0 12px var(--accent)}}
+.hero h1{
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(32px,6vw,56px);
+  font-weight:700;letter-spacing:-2px;line-height:1.05;margin-bottom:12px;
+}
+.hero h1 .grad{
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 50%,var(--accent) 100%);
+  background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;animation:shimmer 4s linear infinite;
+}
+@keyframes shimmer{0%{background-position:0% center}100%{background-position:200% center}}
+.hero p{color:var(--text2);font-size:15px;max-width:480px;margin:0 auto;line-height:1.6}
+
+/* ============ MAIN LAYOUT ============ */
+.app{max-width:1100px;margin:0 auto;padding:0 24px 120px;position:relative;z-index:1}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+
+/* ============ PREVIEW COLUMN ============ */
+.preview-col{position:sticky;top:100px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.preview-wrap{position:relative}
+.preview-glow{
+  position:absolute;inset:-20px;border-radius:50%;z-index:0;
+  background:radial-gradient(circle,rgba(193,146,0,.1) 0%,transparent 70%);
+  animation:glow-breathe 4s ease-in-out infinite;
+}
+@keyframes glow-breathe{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.03)}}
+.preview-frame{
+  position:relative;z-index:1;width:320px;height:320px;
+  border-radius:50%;overflow:hidden;
+  border:3px solid var(--border);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.6),
+    0 0 40px rgba(193,146,0,.08),
+    0 0 0 1px rgba(245,240,232,.03) inset;
+}
+.preview-frame canvas{width:100%;height:100%;display:block}
+
+.preview-badge{
+  position:absolute;bottom:8px;right:8px;z-index:5;
+  padding:4px 12px;border-radius:50px;
+  font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:1px;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);
+  border:1px solid var(--border);color:var(--accent);
+  pointer-events:none;transition:opacity .3s;
+}
+
+/* Action buttons */
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:var(--radius-sm);border:1px solid var(--border2);
+  font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .25s;letter-spacing:.5px;
+  background:var(--glass);color:var(--text2);
+}
+.btn:hover{transform:translateY(-2px);border-color:var(--border);color:var(--text);
+  box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent3));
+  color:#000;border-color:transparent;font-weight:700;
+}
+.btn-primary:hover{
+  box-shadow:0 12px 32px rgba(193,146,0,.35);transform:translateY(-3px);
+}
+.btn-icon{
+  width:40px;height:40px;padding:0;justify-content:center;
+  border-radius:50%;border:1px solid var(--border2);background:var(--glass);
+  color:var(--text2);cursor:pointer;transition:all .25s;
+}
+.btn-icon:hover{border-color:var(--border);color:var(--text);transform:translateY(-2px);
+  box-shadow:0 6px 16px rgba(0,0,0,.3)}
+.btn-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ============ CONTROLS COLUMN ============ */
+.controls-col{display:flex;flex-direction:column;gap:20px}
+
+/* Upload panel */
+.upload-panel{
+  background:var(--glass);border:1px solid var(--border2);border-radius:var(--radius);
+  padding:20px;text-align:center;cursor:pointer;transition:all .3s;
+  position:relative;overflow:hidden;
+}
+.upload-panel:hover{border-color:var(--border);background:rgba(193,146,0,.03)}
+.upload-panel.dragover{border-color:var(--accent);background:rgba(193,146,0,.06);
+  box-shadow:0 0 30px rgba(193,146,0,.1)}
+.upload-icon{font-size:32px;margin-bottom:8px;opacity:.6}
+.upload-text{font-size:13px;color:var(--text2);line-height:1.5}
+.upload-text strong{color:var(--text);font-weight:600}
+.upload-hint{font-size:11px;color:var(--text3);margin-top:4px}
+.upload-input{display:none}
+
+/* Section card */
+.section{
+  background:var(--glass);border:1px solid var(--border2);border-radius:var(--radius);
+  padding:16px 18px;transition:border-color .3s;
+}
+.section:hover{border-color:var(--border)}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{
+  display:flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;
+}
+.section-title-icon{font-size:16px}
+.section-count{font-size:11px;color:var(--text3);font-weight:500}
+
+/* Trait grid */
+.trait-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.trait-btn{
+  aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);
+  cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+}
+.trait-btn::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 0%,rgba(193,146,0,.06) 0%,transparent 70%);
+  opacity:0;transition:opacity .3s;
+}
+.trait-btn:hover::before{opacity:1}
+.trait-btn:hover{border-color:var(--border);transform:translateY(-2px);
+  box-shadow:0 6px 16px rgba(0,0,0,.3)}
+.trait-btn.active{
+  border-color:var(--accent);background:rgba(193,146,0,.08);
+  box-shadow:0 0 16px rgba(193,146,0,.12),0 0 0 1px rgba(193,146,0,.2) inset;
+}
+.trait-btn .emoji{font-size:24px;line-height:1;position:relative;z-index:1;transition:transform .2s}
+.trait-btn:hover .emoji{transform:scale(1.15)}
+.trait-btn .label{font-size:8px;color:var(--text3);font-weight:600;letter-spacing:.5px;text-transform:uppercase;position:relative;z-index:1}
+.trait-btn .check{
+  position:absolute;top:4px;right:4px;width:16px;height:16px;border-radius:50%;
+  background:var(--accent);display:none;align-items:center;justify-content:center;
+  font-size:9px;color:#000;font-weight:900;z-index:2;
+}
+.trait-btn.active .check{display:flex}
+
+/* Toggle row */
+.toggle-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--radius-sm);margin-top:8px;
+}
+.toggle-label{font-size:13px;font-weight:600;color:var(--text)}
+.toggle-hint{font-size:11px;color:var(--text3);margin-top:2px}
+.toggle{
+  width:44px;height:24px;border-radius:12px;border:1px solid var(--border2);
+  background:var(--bg4);cursor:pointer;position:relative;transition:all .3s;flex-shrink:0;
+}
+.toggle.on{background:var(--accent);border-color:var(--accent)}
+.toggle::after{
+  content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;
+  border-radius:50%;background:white;transition:transform .3s;
+  box-shadow:0 2px 4px rgba(0,0,0,.2);
+}
+.toggle.on::after{transform:translateX(20px)}
+
+/* ============ FOOTER ============ */
+.footer{
+  position:relative;z-index:1;text-align:center;
+  padding:32px 24px;border-top:1px solid var(--border2);
+  margin-top:40px;
+}
+.footer-text{font-size:12px;color:var(--text3);letter-spacing:.5px}
+.footer-link{color:var(--accent);text-decoration:none;font-weight:600}
+.footer-link:hover{text-decoration:underline}
+
+/* ============ TOAST ============ */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(120px);
+  padding:12px 24px;background:var(--glass2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);backdrop-filter:blur(30px);
+  font-size:13px;font-weight:600;color:var(--text);z-index:200;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 12px 40px rgba(0,0,0,.5);
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ============ PARTICLES ============ */
+@keyframes float-up{
+  0%{transform:translateY(0) translateX(0);opacity:0}
+  10%{opacity:1}
+  90%{opacity:1}
+  100%{transform:translateY(-100vh) translateX(30px);opacity:0}
+}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;gap:24px}
+  .preview-col{position:static}
+  .preview-frame{width:260px;height:260px}
+  .nav{top:10px;padding:10px 16px;width:95%}
+  .nav-title{font-size:13px;letter-spacing:2px}
+  .nav-sub{display:none}
+  .hero{padding-top:80px}
+  .hero h1{font-size:28px}
+  .trait-grid{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:480px){
+  .preview-frame{width:220px;height:220px}
+  .trait-grid{grid-template-columns:repeat(3,1fr)}
+  .actions{gap:8px}
+  .btn{padding:8px 14px;font-size:12px}
+}
+
+/* ============ REDUCED MOTION ============ */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}
+  .bg-orb,.bg-grid,.bg-noise,canvas#particles{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-fx">
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+</div>
+<div class="bg-grid"></div>
+<div class="bg-noise"></div>
+<canvas id="particles"></canvas>
+
+<!-- Navigation -->
+<nav class="nav">
+  <a href="https://seismic-identity.vercel.app" class="nav-brand">
+    <img src="https://pfp.seismic.website/logo.svg" alt="Seismic" class="nav-logo" onerror="this.style.display='none'">
+    <div>
+      <div class="nav-title">SEISMIC</div>
+      <div class="nav-sub">PFP Generator</div>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="https://x.com/SeismicSys" target="_blank" rel="noopener" class="nav-link">
+      <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      X
+    </a>
+    <a href="https://discord.gg/seismic" target="_blank" rel="noopener" class="nav-link">
+      <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+      Discord
+    </a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge"><span class="hero-badge-dot"></span> FORGE YOUR IDENTITY</div>
+  <h1>Build Your <span class="grad">Seismic</span> PFP</h1>
+  <p>Upload your photo, layer on traits, add your Magnitude badge, and export a PFP that hits different.</p>
+</section>
+
+<!-- App -->
+<div class="app">
+  <div class="layout">
+
+    <!-- LEFT: Preview -->
+    <div class="preview-col">
+      <div class="preview-wrap">
+        <div class="preview-glow"></div>
+        <div class="preview-frame">
+          <canvas id="previewCanvas" width="800" height="800"></canvas>
+          <div class="preview-badge" id="magBadge" style="display:none">M7</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="downloadPFP()" id="downloadBtn" disabled>
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </button>
+        <button class="btn" onclick="randomize()">
+          <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+          Randomize
+        </button>
+        <button class="btn" onclick="resetAll()">
+          <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          Reset
+        </button>
+      </div>
+
+      <div class="actions">
+        <button class="btn-icon" onclick="rotateTrait('bg',-1)" title="Previous background">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="btn-icon" onclick="rotateTrait('bg',1)" title="Next background">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="btn-icon" onclick="rotateTrait('accessory',-1)" title="Previous accessory">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="btn-icon" onclick="rotateTrait('accessory',1)" title="Next accessory">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Controls -->
+    <div class="controls-col">
+
+      <!-- Upload -->
+      <div class="upload-panel" id="uploadPanel">
+        <div class="upload-icon">📸</div>
+        <div class="upload-text"><strong>Drop your photo</strong> or click to upload</div>
+        <div class="upload-hint">JPG, PNG, WebP. Recommended: square crop</div>
+        <input type="file" class="upload-input" id="fileInput" accept="image/*">
+      </div>
+
+      <!-- Backgrounds -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title"><span class="section-title-icon">🎨</span> BACKGROUNDS</div>
+          <div class="section-count" id="bgCount">1 / 12</div>
+        </div>
+        <div class="trait-grid" id="bgGrid"></div>
+      </div>
+
+      <!-- Accessories -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title"><span class="section-title-icon">✨</span> ACCESSORIES</div>
+          <div class="section-count" id="accCount">0 / 1</div>
+        </div>
+        <div class="trait-grid" id="accGrid"></div>
+      </div>
+
+      <!-- Headwear -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title"><span class="section-title-icon">👑</span> HEADWEAR</div>
+          <div class="section-count" id="headCount">0 / 1</div>
+        </div>
+        <div class="trait-grid" id="headGrid"></div>
+      </div>
+
+      <!-- Effects -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title"><span class="section-title-icon">⚡</span> EFFECTS</div>
+          <div class="section-count" id="fxCount">0 / 1</div>
+        </div>
+        <div class="trait-grid" id="fxGrid"></div>
+      </div>
+
+      <!-- Frames -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title"><span class="section-title-icon">🖼️</span> FRAME</div>
+          <div class="section-count" id="frameCount">1 / 6</div>
+        </div>
+        <div class="trait-grid" id="frameGrid"></div>
+      </div>
+
+      <!-- Badge toggle -->
+      <div class="section">
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Magnitude Badge</div>
+            <div class="toggle-hint">Show your tier rank on the PFP</div>
+          </div>
+          <div class="toggle on" id="badgeToggle" onclick="toggleBadge()"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <p class="footer-text">
+    Built for <a href="https://discord.gg/seismic" target="_blank" class="footer-link">Seismic</a> community.
+    <a href="https://x.com/SeismicSys" target="_blank" class="footer-link">@SeismicSys</a>
+  </p>
+</footer>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ DATA ============
+const BACKGROUNDS = [
+  { id:'obsidian', label:'Obsidian', draw:(ctx,S)=>{
+    const g=ctx.createRadialGradient(S/2,S/2,0,S/2,S/2,S*.7);
+    g.addColorStop(0,'#1a1612');g.addColorStop(.5,'#0c0a08');g.addColorStop(1,'#060504');
+    ctx.fillStyle=g;ctx.fillRect(0,0,S,S);
+    // Subtle grid
+    ctx.strokeStyle='rgba(193,146,0,.04)';ctx.lineWidth=1;
+    for(let i=0;i<S;i+=40){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,S);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(S,i);ctx.stroke()}
+  }},
+  { id:'ember', label:'Ember', draw:(ctx,S)=>{
+    const g=ctx.createRadialGradient(S*.3,S*.7,0,S/2,S/2,S*.8);
+    g.addColorStop(0,'#3d1a00');g.addColorStop(.4,'#1a0a00');g.addColorStop(1,'#060200');
+    ctx.fillStyle=g;ctx.fillRect(0,0,S,S);
+    // Floating embers
+    for(let i=0;i<20;i++){
+      const x=Math.random()*S,y=Math.random()*S,r=Math.random()*3+1;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,${Math.floor(100+Math.random()*100)},0,${Math.random()*.3+.1})`;ctx.fill();
+    }
+  }},
+  { id:'midnight', label:'Midnight', draw:(ctx,S)=>{
+    const g=ctx.createLinearGradient(0,0,S,S);
+    g.addColorStop(0,'#0a0e1a');g.addColorStop(.5,'#0d0818');g.addColorStop(1,'#060410');
+    ctx.fillStyle=g;ctx.fillRect(0,0,S,S);
+    // Stars
+    for(let i=0;i<60;i++){
+      const x=Math.random()*S,y=Math.random()*S,r=Math.random()*1.5+.3;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(200,210,255,${Math.random()*.5+.2})`;ctx.fill();
+    }
+  }},
+  { id:'forest', label:'Forest', draw:(ctx,S)=>{
+    const g=ctx.createLinearGradient(0,S,0,0);
+    g.addColorStop(0,'#0a1a0a');g.addColorStop(.5,'#061206');g.addColorStop(1,'#030a03');
+    ctx.fillStyle=g;ctx.fillRect(0,0,S,S);
+    // Mist
+    const mg=ctx.createRadialGradient(S*.5,S*.8,0,S*.5,S*.5,S*.6);
+    mg.addColorStop(0,'rgba(42,163,70,.08)');mg.addColorStop(1,'transparent');
+    ctx.fillStyle=mg;ctx.fillRect(0,0,S,S);
+  }},
+  { id:'ocean', label:'Ocean', draw:(ctx,S)=>{
+    const g=ctx.createLinearGradient(0,0,0,S);
+    g.addColorStop(0,'#020a14');g.addColorStop(.4,'#041428');g.addColorStop(1,'#061a30');
+    ctx.fillStyle=g;ctx.fillRect(0,0,S,S);
+    // Waves
+    ctx.strokeStyle='rgba(6,147,205,.06)';ctx.lineWidth=2;
+    for(let w=0;w<5;w++){
+      ctx.beginPath();
+      for(let x=0;x<S;x+=2){
+        const y=S*.6+w*30+Math.sin(x*.02+w*2)*20;
+        x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+  }},
+  { id:'sakura', label:'Sakura', draw:(ctx,S)=>{
+    const g=ctx.createRadialGradient(S*.3,S*.3,0,S/2,S/2,S*.8);
+    g.addColorStop(0,'#2a0a1a');g.addColorStop(.5,'#140610');g.addColorStop(1,'#0a0208');
+    ctx.fillStyle=g;ctx.fillRect(0,0,S,S);
+    // Petals
+    for(let i=0;i<15;i++){
+      const x=Math.random()*S,y=Math.random()*S,a=Math.random()*Math.PI;
+      ctx.save();ctx.translate(x,y);ctx.rotate(a);
+      ctx.beginPath();ctx.ellipse(0,0,8,4,0,0,Math.PI*2);
+      ctx.fillStyle=`rgba(216,165,201,${Math.random()*.15+.05})`;ctx.fill();ctx.restore();
+    }
+  }},
+  { id:'lava', label:'Lava', draw:(ctx,S)=>{
+    const g=ctx.createRadialGradient(S/2,S,0,S/2,S/2,S*.8);
+    g.addColorStop(0,'#3d0a00');g.addColorStop(.3,'#1a0500');g.addColorStop(1,'#060200');
+    ctx.fillStyle=g;ctx.fillRect(0,0,S,S);
+    // Lava veins
+    ctx.strokeStyle='rgba(200,50,0,.08)';ctx.lineWidth=3;
+    for(let i=0;i<8;i++){
+      ctx.beginPath();ctx.moveTo(Math.random()*S,S);
+      ctx.bezierCurveTo(Math.random()*S,S*.6,Math.random()*S,S*.3,Math.random()*S,0);ctx.stroke();
+    }
+  }},
+  { id:'ice', label:'Ice', draw:(ctx,S)=>{
+    const g=ctx.createRadialGradient(S*.4,S*.3,0,S/2,S/2,S*.8);
+    g.addColorStop(0,'#0a1a2a');g.addColorStop(.5,'#061018');g.addColorStop(1,'#020608');
+    ctx.fillStyle=g;ctx.fillRect(0,0,S,S);
+    // Frost crystals
+    ctx.strokeStyle='rgba(100,200,255,.06)';ctx.lineWidth=1;
+    for(let i=0;i<12;i++){
+      const cx=Math.random()*S,cy=Math.random()*S;
+      for(let a=0;a<6;a++){
+        const angle=a*Math.PI/3,len=20+Math.random()*30;
+        ctx.beginPath();ctx.moveTo(cx,cy);
+        ctx.lineTo(cx+Math.cos(angle)*len,cy+Math.sin(angle)*len);ctx.stroke();
+      }
+    }
+  }},
+  { id:'gold', label:'Gold', draw:(ctx,S)=>{
+    const g=ctx.createRadialGradient(S/2,S/2,0,S/2,S/2,S*.7);
+    g.addColorStop(0,'#2a1a00');g.addColorStop(.5,'#140d00');g.addColorStop(1,'#080500');
+    ctx.fillStyle=g;ctx.fillRect(0,0,S,S);
+    // Gold dust
+    for(let i=0;i<40;i++){
+      const x=Math.random()*S,y=Math.random()*S,r=Math.random()*2+.5;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,216,100,${Math.random()*.2+.05})`;ctx.fill();
+    }
+  }},
+  { id:'void', label:'Void', draw:(ctx,S)=>{
+    ctx.fillStyle='#020202';ctx.fillRect(0,0,S,S);
+    // Void rings
+    for(let i=0;i<6;i++){
+      const r=S*.1+i*S*.08;
+      ctx.beginPath();ctx.arc(S/2,S/2,r,0,Math.PI*2);
+      ctx.strokeStyle=`rgba(100,60,180,${.08-i*.01})`;ctx.lineWidth=1.5;ctx.stroke();
+    }
+  }},
+  { id:'storm', label:'Storm', draw:(ctx,S)=>{
+    const g=ctx.createLinearGradient(0,0,S,S);
+    g.addColorStop(0,'#0a0a14');g.addColorStop(.5,'#140a1a');g.addColorStop(1,'#0a0612');
+    ctx.fillStyle=g;ctx.fillRect(0,0,S,S);
+    // Lightning streaks
+    ctx.strokeStyle='rgba(180,160,255,.05)';ctx.lineWidth=1;
+    for(let i=0;i<4;i++){
+      ctx.beginPath();let x=Math.random()*S,y=0;
+      ctx.moveTo(x,y);
+      while(y<S){x+=(Math.random()-.5)*40;y+=20+Math.random()*30;ctx.lineTo(x,y)}
+      ctx.stroke();
+    }
+  }},
+  { id:'custom', label:'Custom', draw:null, isCustom:true },
+];
+
+const ACCESSORIES = [
+  { id:'none', emoji:'✕', label:'None' },
+  { id:'mic', emoji:'🎤', label:'Mic' },
+  { id:'icecream', emoji:'🍦', label:'Ice Cream' },
+  { id:'rose', emoji:'🌹', label:'Rose' },
+  { id:'phone', emoji:'📱', label:'Phone' },
+  { id:'diamond', emoji:'💎', label:'Diamond' },
+  { id:'rocket', emoji:'🚀', label:'Rocket' },
+  { id:'trophy', emoji:'🏆', label:'Trophy' },
+  { id:'money', emoji:'💰', label:'Money' },
+  { id:'guitar', emoji:'🎸', label:'Guitar' },
+  { id:'beer', emoji:'🍺', label:'Beer' },
+  { id:'sword', emoji:'⚔️', label:'Swords' },
+  { id:'wand', emoji:'🪄', label:'Wand' },
+  { id:'controller', emoji:'🎮', label:'Controller' },
+  { id:'paint', emoji:'🎨', label:'Palette' },
+];
+
+const HEADWEAR = [
+  { id:'none', emoji:'✕', label:'None' },
+  { id:'crown', emoji:'👑', label:'Crown' },
+  { id:'tophat', emoji:'🎩', label:'Top Hat' },
+  { id:'cap', emoji:'🧢', label:'Cap' },
+  { id:'headphones', emoji:'🎧', label:'Phones' },
+  { id:'sunglasses', emoji:'🕶️', label:'Shades' },
+  { id:'halo', emoji:'😇', label:'Halo' },
+  { id:'chef', emoji:'👨‍🍳', label:'Chef' },
+  { id:'horns', emoji:'😈', label:'Horns' },
+  { id:'brain', emoji:'🧠', label:'Galaxy' },
+  { id:'bandana', emoji:'🏴‍☠️', label:'Pirate' },
+  { id:'flower', emoji:'🌸', label:'Flower' },
+  { id:'beret', emoji:'🎨', label:'Beret' },
+  { id:'helmet', emoji:'⛑️', label:'Helmet' },
+  { id:'wig', emoji:'💇', label:'Wig' },
+];
+
+const EFFECTS = [
+  { id:'none', emoji:'✕', label:'None' },
+  { id:'fire', emoji:'🔥', label:'Fire' },
+  { id:'lightning', emoji:'⚡', label:'Lightning' },
+  { id:'sparkles', emoji:'✨', label:'Sparkles' },
+  { id:'star', emoji:'⭐', label:'Star' },
+  { id:'meteor', emoji:'☄️', label:'Meteor' },
+  { id:'earth', emoji:'🌍', label:'Earth' },
+  { id:'moon', emoji:'🌙', label:'Moon' },
+  { id:'rainbow', emoji:'🌈', label:'Rainbow' },
+  { id:'snow', emoji:'❄️', label:'Frost' },
+  { id:'leaf', emoji:'🍃', label:'Wind' },
+  { id:'eyes', emoji:'👁️', label:'Eyes' },
+  { id:'alien', emoji:'👽', label:'Alien' },
+  { id:'ghost', emoji:'👻', label:'Ghost' },
+  { id:'balloon', emoji:'🎈', label:'Balloon' },
+];
+
+const FRAMES = [
+  { id:'circle', label:'Circle' },
+  { id:'hex', label:'Hex' },
+  { id:'diamond', label:'Diamond' },
+  { id:'squircle', label:'Squircle' },
+  { id:'star', label:'Star' },
+  { id:'shield', label:'Shield' },
+];
+
+const MAG_META = {
+  'Mag 3':{tier:3,color:'#2AA346',glow:'rgba(42,163,70,.6)'},
+  'Mag 4':{tier:4,color:'#75E300',glow:'rgba(117,227,0,.6)'},
+  'Mag 5':{tier:5,color:'#659E0F',glow:'rgba(101,158,15,.6)'},
+  'Mag 6':{tier:6,color:'#C19200',glow:'rgba(193,146,0,.6)'},
+  'Mag 7':{tier:7,color:'#A87504',glow:'rgba(168,117,4,.6)'},
+  'Mag 8':{tier:8,color:'#9C1515',glow:'rgba(156,21,21,.6)'},
+  'Mag 9':{tier:9,color:'#0693CD',glow:'rgba(6,147,205,.6)'},
+};
+
+// ============ STATE ============
+let state = {
+  avatarImg: null,
+  bg: 0,
+  accessory: 0,
+  headwear: 0,
+  effect: 0,
+  frame: 0,
+  showBadge: false,
+  mag: null,
+  customBgImg: null,
+};
+
+// ============ PARTICLES ============
+(function initParticles(){
+  const c = document.getElementById('particles');
+  const ctx = c.getContext('2d');
+  let w, h, particles = [];
+
+  function resize(){
+    w = c.width = window.innerWidth;
+    h = c.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  for(let i=0;i<30;i++){
+    particles.push({
+      x: Math.random()*w, y: Math.random()*h,
+      vx: (Math.random()-.5)*.3, vy: -Math.random()*.4-.1,
+      size: Math.random()*2+.5, alpha: Math.random()*.3+.05,
+      life: Math.random()*200+100, maxLife: 300,
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    particles.forEach(p=>{
+      p.x += p.vx; p.y += p.vy; p.life--;
+      if(p.life<=0||p.y<-10){p.x=Math.random()*w;p.y=h+10;p.life=p.maxLife;p.alpha=Math.random()*.3+.05}
+      const fade = p.life < 50 ? p.life/50 : 1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx.fillStyle=`rgba(193,146,0,${p.alpha*fade})`;ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ INIT GRIDS ============
+function initGrids(){
+  // Backgrounds
+  const bgGrid = document.getElementById('bgGrid');
+  BACKGROUNDS.forEach((bg,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'trait-btn'+(i===0?' active':'');
+    btn.dataset.index = i;
+    if(bg.isCustom){
+      btn.innerHTML = `<span class="emoji">📁</span><span class="label">${bg.label}</span><span class="check">✓</span>`;
+      btn.onclick = ()=>document.getElementById('bgFileInput').click();
+    } else {
+      btn.innerHTML = `<span class="emoji">${['⬛','🔥','🌙','🌲','🌊','🌸','🌋','❄️','💰','🕳️','⛈️','📁'][i]}</span><span class="label">${bg.label}</span><span class="check">✓</span>`;
+      btn.onclick = ()=>selectTrait('bg',i);
+    }
+    bgGrid.appendChild(btn);
+  });
+
+  // Add hidden file input for custom bg
+  const bgFileInput = document.createElement('input');
+  bgFileInput.type = 'file'; bgFileInput.accept = 'image/*'; bgFileInput.id = 'bgFileInput';
+  bgFileInput.style.display = 'none';
+  bgFileInput.onchange = (e)=>handleCustomBg(e.target.files[0]);
+  document.body.appendChild(bgFileInput);
+
+  // Accessories
+  initTraitGrid('accGrid', ACCESSORIES, 'accessory');
+  // Headwear
+  initTraitGrid('headGrid', HEADWEAR, 'headwear');
+  // Effects
+  initTraitGrid('fxGrid', EFFECTS, 'effect');
+  // Frames
+  const frameGrid = document.getElementById('frameGrid');
+  FRAMES.forEach((f,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'trait-btn'+(i===0?' active':'');
+    btn.dataset.index = i;
+    btn.innerHTML = `<span class="emoji">${['⬜','⬡','◆','▢','✦','🛡️'][i]}</span><span class="label">${f.label}</span><span class="check">✓</span>`;
+    btn.onclick = ()=>selectTrait('frame',i);
+    frameGrid.appendChild(btn);
+  });
+}
+
+function initTraitGrid(gridId, items, stateKey){
+  const grid = document.getElementById(gridId);
+  items.forEach((item,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'trait-btn'+(i===0?' active':'');
+    btn.dataset.index = i;
+    btn.innerHTML = `<span class="emoji">${item.emoji}</span><span class="label">${item.label}</span><span class="check">✓</span>`;
+    btn.onclick = ()=>selectTrait(stateKey,i);
+    grid.appendChild(btn);
+  });
+}
+
+function selectTrait(key, index){
+  state[key] = index;
+  // Update UI
+  const gridMap = {bg:'bgGrid',accessory:'accGrid',headwear:'headGrid',effect:'fxGrid',frame:'frameGrid'};
+  const grid = document.getElementById(gridMap[key]);
+  grid.querySelectorAll('.trait-btn').forEach((btn,i)=>{
+    btn.classList.toggle('active', i===index);
+  });
+  // Update count
+  const countMap = {bg:'bgCount',accessory:'accCount',headwear:'headCount',effect:'fxCount',frame:'frameCount'};
+  const dataMap = {bg:BACKGROUNDS,accessory:ACCESSORIES,headwear:HEADWEAR,effect:EFFECTS,frame:FRAMES};
+  document.getElementById(countMap[key]).textContent = `${index} / ${dataMap[key].length-1}`;
+  render();
+}
+
+function rotateTrait(key, dir){
+  const dataMap = {bg:BACKGROUNDS,accessory:ACCESSORIES};
+  const max = dataMap[key].length;
+  state[key] = (state[key]+dir+max)%max;
+  selectTrait(key, state[key]);
+}
+
+// ============ FILE UPLOAD ============
+document.getElementById('uploadPanel').addEventListener('click',()=>document.getElementById('fileInput').click());
+document.getElementById('fileInput').addEventListener('change',(e)=>{
+  if(e.target.files[0])loadAvatar(e.target.files[0]);
+});
+// Drag & drop
+const uploadPanel = document.getElementById('uploadPanel');
+uploadPanel.addEventListener('dragover',(e)=>{e.preventDefault();uploadPanel.classList.add('dragover')});
+uploadPanel.addEventListener('dragleave',()=>uploadPanel.classList.remove('dragover'));
+uploadPanel.addEventListener('drop',(e)=>{
+  e.preventDefault();uploadPanel.classList.remove('dragover');
+  if(e.dataTransfer.files[0])loadAvatar(e.dataTransfer.files[0]);
+});
+
+function loadAvatar(file){
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      state.avatarImg = img;
+      document.getElementById('downloadBtn').disabled = false;
+      document.querySelector('.upload-icon').textContent = '✅';
+      document.querySelector('.upload-text').innerHTML = `<strong>${file.name}</strong> loaded`;
+      render();
+      showToast('Avatar loaded');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleCustomBg(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      state.customBgImg = img;
+      selectTrait('bg', BACKGROUNDS.length-1);
+      showToast('Custom background loaded');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ============ RENDER ============
+function render(){
+  const canvas = document.getElementById('previewCanvas');
+  const ctx = canvas.getContext('2d');
+  const S = 800;
+  canvas.width = S; canvas.height = S;
+
+  // Get clip path based on frame
+  ctx.save();
+  applyClipPath(ctx, S);
+
+  // Draw background
+  drawBackground(ctx, S);
+
+  // Draw avatar
+  if(state.avatarImg){
+    const img = state.avatarImg;
+    const size = Math.min(img.width, img.height);
+    const sx = (img.width-size)/2, sy = (img.height-size)/2;
+    ctx.drawImage(img, sx, sy, size, size, 0, 0, S, S);
+  } else {
+    // Draw placeholder
+    drawPlaceholder(ctx, S);
+  }
+
+  // Draw headwear
+  if(state.headwear > 0){
+    const hw = HEADWEAR[state.headwear];
+    drawAccessoryEmoji(ctx, S, hw.emoji, 'head');
+  }
+
+  // Draw accessory (held)
+  if(state.accessory > 0){
+    const acc = ACCESSORIES[state.accessory];
+    drawAccessoryEmoji(ctx, S, acc.emoji, 'held');
+  }
+
+  // Draw effects
+  if(state.effect > 0){
+    const fx = EFFECTS[state.effect];
+    drawAccessoryEmoji(ctx, S, fx.emoji, 'effect');
+  }
+
+  // Draw badge
+  if(state.showBadge && state.mag){
+    drawBadge(ctx, S);
+  }
+
+  ctx.restore();
+}
+
+function applyClipPath(ctx, S){
+  const frame = FRAMES[state.frame];
+  ctx.beginPath();
+  switch(frame.id){
+    case 'circle':
+      ctx.arc(S/2,S/2,S/2,0,Math.PI*2);break;
+    case 'hex':
+      hexPath(ctx,S/2,S/2,S/2);break;
+    case 'diamond':
+      ctx.moveTo(S/2,0);ctx.lineTo(S,S/2);ctx.lineTo(S/2,S);ctx.lineTo(0,S/2);ctx.closePath();break;
+    case 'squircle':
+      squirclePath(ctx,10,10,S-20,S-20,80);break;
+    case 'star':
+      starPath(ctx,S/2,S/2,S/2,S*.22,6);break;
+    case 'shield':
+      shieldPath(ctx,S);break;
+    default:
+      ctx.arc(S/2,S/2,S/2,0,Math.PI*2);
+  }
+  ctx.clip();
+}
+
+function hexPath(ctx,cx,cy,r){
+  ctx.beginPath();
+  for(let i=0;i<6;i++){
+    const a = Math.PI/3*i - Math.PI/6;
+    const x = cx+r*Math.cos(a), y = cy+r*Math.sin(a);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+}
+
+function squirclePath(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+
+function starPath(ctx,cx,cy,outerR,innerR,points){
+  ctx.beginPath();
+  for(let i=0;i<points*2;i++){
+    const r = i%2===0?outerR:innerR;
+    const a = Math.PI/points*i - Math.PI/2;
+    const x = cx+r*Math.cos(a), y = cy+r*Math.sin(a);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+}
+
+function shieldPath(ctx,S){
+  const cx=S/2;
+  ctx.beginPath();
+  ctx.moveTo(cx,S*.05);
+  ctx.bezierCurveTo(cx+S*.35,S*.05,cx+S*.42,S*.1,cx+S*.42,S*.2);
+  ctx.bezierCurveTo(cx+S*.42,S*.5,cx+S*.2,S*.75,cx,S*.95);
+  ctx.bezierCurveTo(cx-S*.2,S*.75,cx-S*.42,S*.5,cx-S*.42,S*.2);
+  ctx.bezierCurveTo(cx-S*.42,S*.1,cx-S*.35,S*.05,cx,S*.05);
+  ctx.closePath();
+}
+
+function drawBackground(ctx, S){
+  const bg = BACKGROUNDS[state.bg];
+  if(bg.isCustom && state.customBgImg){
+    const img = state.customBgImg;
+    const size = Math.min(img.width, img.height);
+    const sx = (img.width-size)/2, sy = (img.height-size)/2;
+    ctx.drawImage(img, sx, sy, size, size, 0, 0, S, S);
+  } else if(bg.draw){
+    bg.draw(ctx, S);
+  } else {
+    ctx.fillStyle='#0a0a0a';ctx.fillRect(0,0,S,S);
+  }
+}
+
+function drawPlaceholder(ctx, S){
+  // Stylized avatar silhouette
+  const cx=S/2, cy=S/2;
+
+  // Body gradient
+  const bodyG = ctx.createRadialGradient(cx,cy+S*.1,0,cx,cy,S*.45);
+  bodyG.addColorStop(0,'rgba(193,146,0,.15)');bodyG.addColorStop(1,'rgba(193,146,0,.03)');
+  ctx.fillStyle=bodyG;
+  ctx.beginPath();ctx.arc(cx,cy+S*.05,S*.35,0,Math.PI*2);ctx.fill();
+
+  // Head
+  ctx.fillStyle='rgba(193,146,0,.12)';
+  ctx.beginPath();ctx.arc(cx,cy-S*.1,S*.15,0,Math.PI*2);ctx.fill();
+
+  // Silhouette outline
+  ctx.strokeStyle='rgba(193,146,0,.2)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(cx,cy-S*.1,S*.15,0,Math.PI*2);ctx.stroke();
+
+  // Body
+  ctx.beginPath();
+  ctx.ellipse(cx,cy+S*.15,S*.2,S*.25,0,0,Math.PI*2);
+  ctx.strokeStyle='rgba(193,146,0,.15)';ctx.stroke();
+
+  // Upload hint
+  ctx.fillStyle='rgba(193,146,0,.3)';
+  ctx.font=`600 ${S*.04}px 'Outfit',sans-serif`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('Upload your photo',cx,cy+S*.38);
+  ctx.font=`400 ${S*.025}px 'Outfit',sans-serif`;
+  ctx.fillStyle='rgba(193,146,0,.2)';
+  ctx.fillText('Drag & drop or click above',cx,cy+S*.43);
+}
+
+function drawAccessoryEmoji(ctx, S, emoji, type){
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  switch(type){
+    case 'head':
+      // Position based on accessory
+      if(emoji==='🕶️'){
+        ctx.font=`${S*.1}px serif`;ctx.fillText(emoji,S/2,S*.38);
+      } else if(emoji==='😇'){
+        ctx.font=`${S*.1}px serif`;ctx.fillText(emoji,S/2,S*.12);
+      } else {
+        ctx.font=`${S*.12}px serif`;ctx.fillText(emoji,S/2,S*.15);
+      }
+      break;
+    case 'held':
+      ctx.font=`${S*.12}px serif`;ctx.fillText(emoji,S*.78,S*.78);
+      break;
+    case 'effect':
+      ctx.font=`${S*.07}px serif`;
+      const positions=[[S*.12,S*.12],[S*.88,S*.12],[S*.12,S*.88],[S*.88,S*.88],[S/2,S*.06]];
+      positions.forEach(([x,y])=>ctx.fillText(emoji,x,y));
+      break;
+  }
+}
+
+function drawBadge(ctx, S){
+  if(!state.mag) return;
+  const meta = MAG_META[state.mag];
+  if(!meta) return;
+
+  const badgeSize = S*.18;
+  const x = S-badgeSize-S*.04;
+  const y = S-badgeSize-S*.04;
+  const cx = x+badgeSize/2, cy = y+badgeSize/2, r = badgeSize/2;
+
+  // Outer glow
+  ctx.shadowColor = meta.glow; ctx.shadowBlur = badgeSize*.4;
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+  ctx.fillStyle = meta.color;ctx.fill();
+
+  // Inner circle
+  ctx.shadowBlur = 0;
+  ctx.beginPath();ctx.arc(cx,cy,r*.82,0,Math.PI*2);
+  ctx.fillStyle = '#0a0806';ctx.fill();
+
+  // Ring gradient
+  const grad = ctx.createRadialGradient(cx,cy,r*.5,cx,cy,r*.82);
+  grad.addColorStop(0,'transparent');grad.addColorStop(1,meta.color+'22');
+  ctx.beginPath();ctx.arc(cx,cy,r*.82,0,Math.PI*2);ctx.fillStyle=grad;ctx.fill();
+
+  // Text
+  ctx.fillStyle=meta.color;
+  ctx.font=`900 ${badgeSize*.4}px 'Space Grotesk',sans-serif`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.shadowColor=meta.glow;ctx.shadowBlur=badgeSize*.2;
+  ctx.fillText(`M${meta.tier}`,cx,cy);
+  ctx.shadowBlur=0;
+}
+
+// ============ CONTROLS ============
+function toggleBadge(){
+  state.showBadge = !state.showBadge;
+  document.getElementById('badgeToggle').classList.toggle('on', state.showBadge);
+  document.getElementById('magBadge').style.display = state.showBadge && state.mag ? 'block' : 'none';
+  render();
+}
+
+function randomize(){
+  state.bg = Math.floor(Math.random()*(BACKGROUNDS.length-1));
+  state.accessory = Math.floor(Math.random()*ACCESSORIES.length);
+  state.headwear = Math.floor(Math.random()*HEADWEAR.length);
+  state.effect = Math.floor(Math.random()*EFFECTS.length);
+  state.frame = Math.floor(Math.random()*FRAMES.length);
+
+  // Update all grids
+  ['bg','accessory','headwear','effect','frame'].forEach(k=>selectTrait(k,state[k]));
+  showToast('Randomized');
+}
+
+function resetAll(){
+  state.bg = 0; state.accessory = 0; state.headwear = 0;
+  state.effect = 0; state.frame = 0;
+  ['bg','accessory','headwear','effect','frame'].forEach(k=>selectTrait(k,0));
+  showToast('Reset');
+}
+
+// ============ DOWNLOAD ============
+function downloadPFP(){
+  if(!state.avatarImg){showToast('Upload a photo first');return}
+  showToast('Exporting...');
+
+  // Render at 1024
+  const expCanvas = document.createElement('canvas');
+  const S = 1024;
+  expCanvas.width = S; expCanvas.height = S;
+  const ctx = expCanvas.getContext('2d');
+
+  ctx.save();
+  applyClipPath(ctx, S);
+  drawBackground(ctx, S);
+
+  const img = state.avatarImg;
+  const size = Math.min(img.width, img.height);
+  const sx = (img.width-size)/2, sy = (img.height-size)/2;
+  ctx.drawImage(img, sx, sy, size, size, 0, 0, S, S);
+
+  if(state.headwear>0) drawAccessoryEmoji(ctx,S,HEADWEAR[state.headwear].emoji,'head');
+  if(state.accessory>0) drawAccessoryEmoji(ctx,S,ACCESSORIES[state.accessory].emoji,'held');
+  if(state.effect>0) drawAccessoryEmoji(ctx,S,EFFECTS[state.effect].emoji,'effect');
+  if(state.showBadge && state.mag) drawBadge(ctx, S);
+  ctx.restore();
+
+  // Add frame border
+  ctx.save();
+  applyClipPath(ctx, S);
+  ctx.strokeStyle = 'rgba(193,146,0,.3)';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  ctx.restore();
+
+  const link = document.createElement('a');
+  link.download = 'seismic-pfp.png';
+  link.href = expCanvas.toDataURL('image/png');
+  link.click();
+  showToast('Downloaded');
+}
+
+// ============ TOAST ============
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ============ MAG BADGE DEMO ============
+// For demo: cycle through mag tiers on badge click
+document.getElementById('magBadge').addEventListener('click',()=>{
+  const tiers = Object.keys(MAG_META);
+  const currentIdx = tiers.indexOf(state.mag);
+  state.mag = tiers[(currentIdx+1)%tiers.length];
+  const meta = MAG_META[state.mag];
+  document.getElementById('magBadge').textContent = `M${meta.tier}`;
+  document.getElementById('magBadge').style.color = meta.color;
+  render();
+});
+
+// ============ BOOT ============
+initGrids();
+render();
+
+// Auto-detect mag from URL hash (if coming from Discord OAuth)
+const hash = location.hash;
+if(hash.includes('access_token')){
+  const params = new URLSearchParams(hash.substring(1));
+  const token = params.get('access_token');
+  if(token){
+    fetch('https://discord.com/api/users/@me',{headers:{Authorization:`Bearer ${token}`}})
+      .then(r=>r.json())
+      .then(user=>{
+        if(user.avatar){
+          const avatarUrl = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=512`;
+          const img = new Image();img.crossOrigin='anonymous';
+          img.onload = ()=>{
+            state.avatarImg = img;
+            document.getElementById('downloadBtn').disabled = false;
+            document.querySelector('.upload-icon').textContent = '✅';
+            document.querySelector('.upload-text').innerHTML = `<strong>Discord avatar</strong> loaded`;
+            render();showToast('Discord avatar loaded');
+          };
+          img.onerror = ()=>showToast('Could not load Discord avatar (CORS)');
+          img.src = avatarUrl;
+        }
+      })
+      .catch(()=>{});
+    history.replaceState(null,'',location.pathname);
+  }
+}
+
+// Parallax effect on preview
+document.addEventListener('mousemove',(e)=>{
+  const preview = document.querySelector('.preview-frame');
+  if(!preview) return;
+  const rect = preview.getBoundingClientRect();
+  const cx = rect.left+rect.width/2, cy = rect.top+rect.height/2;
+  const dx = (e.clientX-cx)/rect.width, dy = (e.clientY-cy)/rect.height;
+  preview.style.transform = `perspective(600px) rotateY(${dx*5}deg) rotateX(${-dy*5}deg)`;
+});
+document.querySelector('.preview-frame')?.addEventListener('mouseleave',function(){
+  this.style.transform = 'perspective(600px) rotateY(0) rotateX(0)';
+});
+</script>
+</body>
+</html>
