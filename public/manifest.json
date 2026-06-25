@@ -1,0 +1,499 @@
+{
+  "Model": [
+    {
+      "id": "1",
+      "name": "1",
+      "desc": "a cute cartoon rock character mascot with big round eyes, smiling face, simple body, arms and legs, centered, full body visible"
+    },
+    {
+      "id": "2",
+      "name": "2",
+      "desc": "a cute cartoon robot character with round head, antenna, glowing eyes, boxy body, centered, full body visible"
+    },
+    {
+      "id": "3",
+      "name": "3",
+      "desc": "a cute cartoon cat character standing upright on two legs, big eyes, whiskers, tail, centered, full body visible"
+    },
+    {
+      "id": "4",
+      "name": "4",
+      "desc": "a cute cartoon friendly skull character with crossbones, happy expression, centered, full body visible"
+    },
+    {
+      "id": "5",
+      "name": "5",
+      "desc": "a cute cartoon alien character with three eyes, green skin, two antennae, small body, centered, full body visible"
+    },
+    {
+      "id": "6",
+      "name": "6",
+      "desc": "a cute cartoon ninja character in black outfit, headband with red circle, centered, full body visible"
+    },
+    {
+      "id": "7",
+      "name": "7",
+      "desc": "a cute cartoon pirate character with hat, eyepatch, vest, boots, centered, full body visible"
+    },
+    {
+      "id": "8",
+      "name": "8",
+      "desc": "a cute cartoon wizard character with pointed hat, robe with stars, holding staff, centered, full body visible"
+    }
+  ],
+  "Background": [
+    {
+      "id": "1",
+      "name": "1",
+      "desc": "deep space cosmic nebula, stars, purple blue gradient, digital art"
+    },
+    {
+      "id": "2",
+      "name": "2",
+      "desc": "volcanic lava landscape, glowing magma, dark rocks, orange red"
+    },
+    {
+      "id": "3",
+      "name": "3",
+      "desc": "underwater ocean scene, coral reef, fish, blue"
+    },
+    {
+      "id": "4",
+      "name": "4",
+      "desc": "enchanted forest, glowing mushrooms, fireflies, green"
+    },
+    {
+      "id": "5",
+      "name": "5",
+      "desc": "neon cyberpunk city night, pink blue lights"
+    },
+    {
+      "id": "6",
+      "name": "6",
+      "desc": "cherry blossom garden, pink petals, soft light"
+    },
+    {
+      "id": "7",
+      "name": "7",
+      "desc": "arctic ice cave, crystalline blue, snowflakes"
+    },
+    {
+      "id": "8",
+      "name": "8",
+      "desc": "desert oasis sunset, golden sand, palm trees"
+    },
+    {
+      "id": "9",
+      "name": "9",
+      "desc": "candy land, lollipop trees, rainbow sky"
+    },
+    {
+      "id": "10",
+      "name": "10",
+      "desc": "haunted mansion interior, cobwebs, candles, purple"
+    }
+  ],
+  "Clothes": [
+    {
+      "id": "1",
+      "name": "1",
+      "desc": "a superhero cape and suit, red and gold, laid flat, viewed from front, no body inside"
+    },
+    {
+      "id": "2",
+      "name": "2",
+      "desc": "a formal business suit with tie, laid flat, viewed from front, no body inside"
+    },
+    {
+      "id": "3",
+      "name": "3",
+      "desc": "a hoodie and sneakers, casual streetwear, laid flat, viewed from front"
+    },
+    {
+      "id": "4",
+      "name": "4",
+      "desc": "a pirate coat with gold buttons, laid flat, viewed from front"
+    },
+    {
+      "id": "5",
+      "name": "5",
+      "desc": "a knight armor suit, silver and blue, laid flat, viewed from front"
+    },
+    {
+      "id": "6",
+      "name": "6",
+      "desc": "a kimono robe with cherry blossom pattern, laid flat, viewed from front"
+    },
+    {
+      "id": "7",
+      "name": "7",
+      "desc": "a space suit with patches, laid flat, viewed from front"
+    },
+    {
+      "id": "8",
+      "name": "8",
+      "desc": "a wizard robe with stars and moons pattern, laid flat, viewed from front"
+    }
+  ],
+  "Tattoo": [
+    {
+      "id": "1",
+      "name": "1",
+      "desc": "a skull and crossbones tattoo design, black ink, isolated on green"
+    },
+    {
+      "id": "2",
+      "name": "2",
+      "desc": "a rose flower tattoo design, traditional style, red green, isolated on green"
+    },
+    {
+      "id": "3",
+      "name": "3",
+      "desc": "a dragon tattoo design, Asian style, green gold, isolated on green"
+    },
+    {
+      "id": "4",
+      "name": "4",
+      "desc": "a lightning bolt tattoo design, electric blue, isolated on green"
+    },
+    {
+      "id": "5",
+      "name": "5",
+      "desc": "a heart with wings tattoo design, red black, isolated on green"
+    },
+    {
+      "id": "6",
+      "name": "6",
+      "desc": "a tribal sun tattoo design, black geometric, isolated on green"
+    },
+    {
+      "id": "7",
+      "name": "7",
+      "desc": "a snake tattoo design, coiled, green scales, isolated on green"
+    },
+    {
+      "id": "8",
+      "name": "8",
+      "desc": "a flame fire tattoo design, orange yellow, isolated on green"
+    }
+  ],
+  "Eyes": [
+    {
+      "id": "1",
+      "name": "1",
+      "desc": "a pair of big sparkly anime cartoon eyes, blue iris, just the eyes floating, no face"
+    },
+    {
+      "id": "2",
+      "name": "2",
+      "desc": "a pair of cartoon laser beam eyes glowing red, just the eyes floating, no face"
+    },
+    {
+      "id": "3",
+      "name": "3",
+      "desc": "a pair of cartoon heart shaped eyes pink, just the eyes floating, no face"
+    },
+    {
+      "id": "4",
+      "name": "4",
+      "desc": "a pair of cartoon star shaped eyes golden, just the eyes floating, no face"
+    },
+    {
+      "id": "5",
+      "name": "5",
+      "desc": "a pair of cartoon spiral hypnotic eyes purple, just the eyes floating, no face"
+    },
+    {
+      "id": "6",
+      "name": "6",
+      "desc": "a pair of cartoon robot LED eyes green digital, just the eyes floating, no face"
+    },
+    {
+      "id": "7",
+      "name": "7",
+      "desc": "a pair of cartoon closed happy eyes curved line smile, just the eyes floating, no face"
+    },
+    {
+      "id": "8",
+      "name": "8",
+      "desc": "a pair of cartoon heterochromia eyes one blue one green, just the eyes floating, no face"
+    }
+  ],
+  "Eyebrow": [
+    {
+      "id": "1",
+      "name": "1",
+      "desc": "a pair of thick angry cartoon eyebrows black, just the eyebrows floating, no face"
+    },
+    {
+      "id": "2",
+      "name": "2",
+      "desc": "a pair of thin surprised cartoon eyebrows raised high, just the eyebrows floating, no face"
+    },
+    {
+      "id": "3",
+      "name": "3",
+      "desc": "a cartoon unibrow one big connected brow, just the eyebrow floating, no face"
+    },
+    {
+      "id": "4",
+      "name": "4",
+      "desc": "a pair of fancy skeptical cartoon eyebrows one raised, just the eyebrows floating, no face"
+    },
+    {
+      "id": "5",
+      "name": "5",
+      "desc": "a pair of lightning bolt shaped cartoon eyebrows, just the eyebrows floating, no face"
+    },
+    {
+      "id": "6",
+      "name": "6",
+      "desc": "a pair of rainbow colored cartoon eyebrows, just the eyebrows floating, no face"
+    },
+    {
+      "id": "7",
+      "name": "7",
+      "desc": "a pair of fire flame shaped cartoon eyebrows, just the eyebrows floating, no face"
+    }
+  ],
+  "Glasses": [
+    {
+      "id": "1",
+      "name": "1",
+      "desc": "a pair of round John Lennon style glasses gold frame, just the glasses floating, no face"
+    },
+    {
+      "id": "2",
+      "name": "2",
+      "desc": "a pair of cool aviator sunglasses mirror lens, just the glasses floating, no face"
+    },
+    {
+      "id": "3",
+      "name": "3",
+      "desc": "a pair of heart shaped glasses pink frame, just the glasses floating, no face"
+    },
+    {
+      "id": "4",
+      "name": "4",
+      "desc": "a pair of 3D movie glasses red and blue lens, just the glasses floating, no face"
+    },
+    {
+      "id": "5",
+      "name": "5",
+      "desc": "a pair of steampunk goggles brass and leather, just the goggles floating, no face"
+    },
+    {
+      "id": "6",
+      "name": "6",
+      "desc": "a pair of star shaped glasses rainbow frame, just the glasses floating, no face"
+    },
+    {
+      "id": "7",
+      "name": "7",
+      "desc": "a pair of sport wraparound sunglasses, just the glasses floating, no face"
+    },
+    {
+      "id": "8",
+      "name": "8",
+      "desc": "a pair of tiny narrow trendy sunglasses, just the glasses floating, no face"
+    }
+  ],
+  "Weapon": [
+    {
+      "id": "1",
+      "name": "1",
+      "desc": "a cartoon wooden broom stick, just the broom isolated, no person holding it"
+    },
+    {
+      "id": "2",
+      "name": "2",
+      "desc": "a cartoon magic wand with sparkles star tip, just the wand isolated"
+    },
+    {
+      "id": "3",
+      "name": "3",
+      "desc": "a cartoon wooden sword simple cute, just the sword isolated"
+    },
+    {
+      "id": "4",
+      "name": "4",
+      "desc": "a cartoon fishing rod with fish on hook, just the rod isolated"
+    },
+    {
+      "id": "5",
+      "name": "5",
+      "desc": "a cartoon rubber chicken yellow silly, just the chicken isolated"
+    },
+    {
+      "id": "6",
+      "name": "6",
+      "desc": "a cartoon giant lollipop candy stick, just the lollipop isolated"
+    },
+    {
+      "id": "7",
+      "name": "7",
+      "desc": "a cartoon boombox retro music player, just the boombox isolated"
+    },
+    {
+      "id": "8",
+      "name": "8",
+      "desc": "a cartoon foam finger number one, just the foam finger isolated"
+    },
+    {
+      "id": "9",
+      "name": "9",
+      "desc": "a cartoon banana peel slipping hazard, just the banana peel isolated"
+    },
+    {
+      "id": "10",
+      "name": "10",
+      "desc": "a cartoon selfie stick with phone, just the selfie stick isolated"
+    }
+  ],
+  "Hat": [
+    {
+      "id": "1",
+      "name": "1",
+      "desc": "a cartoon top hat black with ribbon, just the hat floating, no head"
+    },
+    {
+      "id": "2",
+      "name": "2",
+      "desc": "a cartoon party hat colorful with pom pom, just the hat floating, no head"
+    },
+    {
+      "id": "3",
+      "name": "3",
+      "desc": "a cartoon cowboy hat brown leather, just the hat floating, no head"
+    },
+    {
+      "id": "4",
+      "name": "4",
+      "desc": "a cartoon chef toque tall white hat, just the hat floating, no head"
+    },
+    {
+      "id": "5",
+      "name": "5",
+      "desc": "a cartoon wizard pointed hat blue with stars, just the hat floating, no head"
+    },
+    {
+      "id": "6",
+      "name": "6",
+      "desc": "a cartoon pirate tricorn hat black feather, just the hat floating, no head"
+    },
+    {
+      "id": "7",
+      "name": "7",
+      "desc": "a cartoon backwards baseball cap red, just the hat floating, no head"
+    },
+    {
+      "id": "8",
+      "name": "8",
+      "desc": "a cartoon flower crown colorful flowers, just the crown floating, no head"
+    },
+    {
+      "id": "9",
+      "name": "9",
+      "desc": "a cartoon viking helmet with horns, just the helmet floating, no head"
+    },
+    {
+      "id": "10",
+      "name": "10",
+      "desc": "a cartoon propeller beanie hat, just the hat floating, no head"
+    }
+  ],
+  "Mouth": [
+    {
+      "id": "1",
+      "name": "1",
+      "desc": "a cartoon big happy smile showing teeth, just the mouth floating, no face"
+    },
+    {
+      "id": "2",
+      "name": "2",
+      "desc": "a cartoon whistling mouth round shape, just the mouth floating, no face"
+    },
+    {
+      "id": "3",
+      "name": "3",
+      "desc": "a cartoon tongue sticking out playful, just the mouth floating, no face"
+    },
+    {
+      "id": "4",
+      "name": "4",
+      "desc": "a cartoon vampire fangs cute Dracula, just the mouth floating, no face"
+    },
+    {
+      "id": "5",
+      "name": "5",
+      "desc": "a cartoon duck lips pouting, just the mouth floating, no face"
+    },
+    {
+      "id": "6",
+      "name": "6",
+      "desc": "a cartoon mouth eating pizza with messy sauce, just the mouth floating, no face"
+    },
+    {
+      "id": "7",
+      "name": "7",
+      "desc": "a cartoon bubble gum bubble pink, just the mouth and bubble floating, no face"
+    },
+    {
+      "id": "8",
+      "name": "8",
+      "desc": "a cartoon cat mouth w shape cute, just the mouth floating, no face"
+    }
+  ],
+  "Hair": [
+    {
+      "id": "1",
+      "name": "1",
+      "desc": "cartoon spiky anime hair blue color, just the hair piece floating, no head"
+    },
+    {
+      "id": "2",
+      "name": "2",
+      "desc": "cartoon long flowing hair purple, just the hair piece floating, no head"
+    },
+    {
+      "id": "3",
+      "name": "3",
+      "desc": "cartoon mohawk punk hair green, just the hair piece floating, no head"
+    },
+    {
+      "id": "4",
+      "name": "4",
+      "desc": "cartoon afro curly hair brown, just the hair piece floating, no head"
+    },
+    {
+      "id": "5",
+      "name": "5",
+      "desc": "cartoon twin pigtails hair pink with ribbons, just the hair piece floating, no head"
+    },
+    {
+      "id": "6",
+      "name": "6",
+      "desc": "cartoon slicked back hair blonde, just the hair piece floating, no head"
+    },
+    {
+      "id": "7",
+      "name": "7",
+      "desc": "cartoon messy bedhead hair red, just the hair piece floating, no head"
+    },
+    {
+      "id": "8",
+      "name": "8",
+      "desc": "cartoon bald shiny smooth head, just the bald head floating"
+    },
+    {
+      "id": "9",
+      "name": "9",
+      "desc": "cartoon long braids hair with ribbons, just the hair piece floating, no head"
+    },
+    {
+      "id": "10",
+      "name": "10",
+      "desc": "cartoon rainbow colored hair, just the hair piece floating, no head"
+    }
+  ]
+}

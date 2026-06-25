@@ -1,0 +1,14 @@
+{
+  "buildCommand": null,
+  "outputDirectory": "public",
+  "framework": null,
+  "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/pfp/(.*)",
+      "headers": [
+        {"key": "Cache-Control", "value": "public, max-age=86400, s-maxage=604800"}
+      ]
+    }
+  ]
+}
