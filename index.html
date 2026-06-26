@@ -89,8 +89,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 
 <script>
 // ═══ CONSTANTS ═══
-var S=800, HX=400, HY=260, HR=155;
-var SK='#e8c4a0', SK2='#d4a882', SK3='#c49470', SK4='#f0d4b8', SK5='#b08060';
+var S=800, HX=400, HY=290, HR=185;
+var SK='#f5d8c0', SK2='#e8c0a0', SK3='#d4a882', SK4='#fce0cc', SK5='#4a2a18';
 
 // ═══ CATEGORIES ═══
 var CATS=[
@@ -122,151 +122,170 @@ var D={
   bg_gold:function(c){c.fillStyle=grad(c,S/2,S/2,S*0.7,'#2a2008','#0a0800');c.fillRect(0,0,S,S)},
   bg_cyber:function(c){c.fillStyle=lgrad(c,0,0,S,S,'#080a1a','#0a0818');c.fillRect(0,0,S,S);c.strokeStyle='rgba(0,255,200,.03)';c.lineWidth=1;for(var i=0;i<S;i+=40){c.beginPath();c.moveTo(i,0);c.lineTo(i,S);c.stroke();c.beginPath();c.moveTo(0,i);c.lineTo(S,i);c.stroke()}},
 
-  // ─── BODY & HEAD (drawn once in render) ───
+  // ─── BODY & HEAD (anime chibi style) ───
   body:function(c){
     // Neck shadow
-    c.fillStyle=SK3;oval(c,HX,HY+HR*0.88,30,18);c.fill();
+    c.fillStyle=SK3;oval(c,HX,HY+HR*0.92,22,14);c.fill();
     // Neck
-    c.fillStyle=SK;var ny=HY+HR*0.82;c.fillRect(HX-28,ny,56,HY+HR*1.15-ny);
-    // Shoulders & body
+    c.fillStyle=SK;var ny=HY+HR*0.88;c.fillRect(HX-20,ny,40,HY+HR*1.12-ny);
+    // Shoulders & body (small chibi body)
     c.fillStyle=SK3;c.beginPath();
-    c.moveTo(HX-HR*1.1,HY+HR*1.05);
-    c.quadraticCurveTo(HX-HR*1.3,HY+HR*1.25,HX-HR*1.2,HY+HR*1.65);
-    c.lineTo(HX-HR*1.15,S*0.92);c.lineTo(HX+HR*1.15,S*0.92);
-    c.lineTo(HX+HR*1.2,HY+HR*1.65);
-    c.quadraticCurveTo(HX+HR*1.3,HY+HR*1.25,HX+HR*1.1,HY+HR*1.05);c.closePath();c.fill();
+    c.moveTo(HX-HR*0.7,HY+HR*1.05);
+    c.quadraticCurveTo(HX-HR*0.85,HY+HR*1.18,HX-HR*0.8,HY+HR*1.45);
+    c.lineTo(HX-HR*0.75,S*0.92);c.lineTo(HX+HR*0.75,S*0.92);
+    c.lineTo(HX+HR*0.8,HY+HR*1.45);
+    c.quadraticCurveTo(HX+HR*0.85,HY+HR*1.18,HX+HR*0.7,HY+HR*1.05);c.closePath();c.fill();
     // Shoulder highlight
-    c.fillStyle='rgba(240,212,184,.15)';c.beginPath();
-    c.moveTo(HX-HR*1.05,HY+HR*1.07);
-    c.quadraticCurveTo(HX-HR*0.8,HY+HR*1.02,HX-HR*0.4,HY+HR*1.07);
-    c.lineTo(HX-HR*0.4,HY+HR*1.2);c.quadraticCurveTo(HX-HR*0.8,HY+HR*1.15,HX-HR*1.05,HY+HR*1.18);c.fill();
-    c.fillStyle='rgba(240,212,184,.15)';c.beginPath();
-    c.moveTo(HX+HR*1.05,HY+HR*1.07);
-    c.quadraticCurveTo(HX+HR*0.8,HY+HR*1.02,HX+HR*0.4,HY+HR*1.07);
-    c.lineTo(HX+HR*0.4,HY+HR*1.2);c.quadraticCurveTo(HX+HR*0.8,HY+HR*1.15,HX+HR*1.05,HY+HR*1.18);c.fill();
+    c.fillStyle='rgba(245,216,192,.18)';c.beginPath();
+    c.moveTo(HX-HR*0.65,HY+HR*1.07);c.quadraticCurveTo(HX-HR*0.4,HY+HR*1.02,HX-HR*0.15,HY+HR*1.07);
+    c.lineTo(HX-HR*0.15,HY+HR*1.18);c.quadraticCurveTo(HX-HR*0.4,HY+HR*1.15,HX-HR*0.65,HY+HR*1.15);c.fill();
+    c.fillStyle='rgba(245,216,192,.18)';c.beginPath();
+    c.moveTo(HX+HR*0.65,HY+HR*1.07);c.quadraticCurveTo(HX+HR*0.4,HY+HR*1.02,HX+HR*0.15,HY+HR*1.07);
+    c.lineTo(HX+HR*0.15,HY+HR*1.18);c.quadraticCurveTo(HX+HR*0.4,HY+HR*1.15,HX+HR*0.65,HY+HR*1.15);c.fill();
   },
   head:function(c){
     // Ears
-    c.fillStyle=SK;oval(c,HX-HR*0.95,HY+8,18,26);c.fill();
-    oval(c,HX+HR*0.95,HY+8,18,26);c.fill();
-    c.fillStyle=SK2;oval(c,HX-HR*0.95,HY+8,9,14);c.fill();
-    oval(c,HX+HR*0.95,HY+8,9,14);c.fill();
-    // Head base
+    c.fillStyle=SK;oval(c,HX-HR*0.96,HY+10,16,24);c.fill();
+    oval(c,HX+HR*0.96,HY+10,16,24);c.fill();
+    c.fillStyle=SK2;oval(c,HX-HR*0.96,HY+10,8,12);c.fill();
+    oval(c,HX+HR*0.96,HY+10,8,12);c.fill();
+    // Head base (round anime head)
     c.fillStyle=SK;circle(c,HX,HY,HR);c.fill();
-    // Face gradient (dimension)
-    c.fillStyle=grad(c,HX-30,HY-40,HR*1.1,'rgba(240,212,184,.25)','rgba(200,160,120,.05)');circle(c,HX,HY,HR);c.fill();
-    // Jaw shadow
-    c.fillStyle='rgba(176,128,96,.2)';c.beginPath();
-    c.moveTo(HX-HR*0.7,HY+HR*0.5);
-    c.quadraticCurveTo(HX,HY+HR*1.15,HX+HR*0.7,HY+HR*0.5);
-    c.quadraticCurveTo(HX,HY+HR*1.0,HX-HR*0.7,HY+HR*0.5);c.fill();
-    // Nose
-    c.fillStyle=SK2;c.beginPath();
-    c.moveTo(HX-3,HY+10);c.quadraticCurveTo(HX-12,HY+35,HX-6,HY+40);
-    c.quadraticCurveTo(HX,HY+44,HX+6,HY+40);
-    c.quadraticCurveTo(HX+12,HY+35,HX+3,HY+10);c.fill();
-    c.fillStyle=SK4;c.beginPath();c.ellipse(HX-5,HY+38,4,3,0.2,0,Math.PI*2);c.fill();
-    c.beginPath();c.ellipse(HX+5,HY+38,4,3,-0.2,0,Math.PI*2);c.fill();
-    // Eyebrows
-    c.strokeStyle=SK5;c.lineWidth=4.5;c.lineCap='round';
-    c.beginPath();c.moveTo(HX-52,HY-38);c.quadraticCurveTo(HX-32,HY-50,HX-12,HY-38);c.stroke();
-    c.beginPath();c.moveTo(HX+52,HY-38);c.quadraticCurveTo(HX+32,HY-50,HX+12,HY-38);c.stroke();
-    // Default smile
-    c.strokeStyle=SK3;c.lineWidth=3.5;c.lineCap='round';
-    c.beginPath();c.arc(HX,HY+62,20,0.15,Math.PI-0.15);c.stroke();
+    // Face gradient (anime-style smooth)
+    c.fillStyle=grad(c,HX-40,HY-50,HR*1.15,'rgba(255,240,220,.3)','rgba(240,200,170,.05)');circle(c,HX,HY,HR);c.fill();
+    // Cheek blush (anime signature)
+    c.fillStyle='rgba(255,140,140,.12)';oval(c,HX-HR*0.48,HY+HR*0.25,28,18);c.fill();
+    oval(c,HX+HR*0.48,HY+HR*0.25,28,18);c.fill();
+    // Jaw shadow (soft anime)
+    c.fillStyle='rgba(212,168,130,.12)';c.beginPath();
+    c.moveTo(HX-HR*0.6,HY+HR*0.55);
+    c.quadraticCurveTo(HX,HY+HR*1.08,HX+HR*0.6,HY+HR*0.55);
+    c.quadraticCurveTo(HX,HY+HR*0.95,HX-HR*0.6,HY+HR*0.55);c.fill();
+    // Nose (tiny anime dot)
+    c.fillStyle=SK2;circle(c,HX,HY+HR*0.15,4);c.fill();
+    // Eyebrows (thin anime style)
+    c.strokeStyle=SK5;c.lineWidth=3.5;c.lineCap='round';
+    c.beginPath();c.moveTo(HX-58,HY-HR*0.22);c.quadraticCurveTo(HX-35,HY-HR*0.32,HX-14,HY-HR*0.22);c.stroke();
+    c.beginPath();c.moveTo(HX+58,HY-HR*0.22);c.quadraticCurveTo(HX+35,HY-HR*0.32,HX+14,HY-HR*0.22);c.stroke();
+    // Default smile (small anime mouth)
+    c.strokeStyle=SK3;c.lineWidth=3;c.lineCap='round';
+    c.beginPath();c.arc(HX,HY+HR*0.38,14,0.2,Math.PI-0.2);c.stroke();
   },
 
   // ─── EYES ───
   eyes_normal:function(c){
-    [[-32,0],[32,0]].forEach(function(p){
-      var x=HX+p[0],y=HY-8;
+    [[-38,0],[38,0]].forEach(function(p){
+      var x=HX+p[0],y=HY-HR*0.05;
       // White
-      c.fillStyle='#fff';oval(c,x,y,26,20);c.fill();
-      // Shadow
-      c.fillStyle='rgba(0,0,0,.06)';oval(c,x,y+4,24,16);c.fill();
-      // Iris
-      c.fillStyle='#3a2010';circle(c,x+4,y+2,12);c.fill();
+      c.fillStyle='#fff';oval(c,x,y,32,26);c.fill();
+      // Shadow top
+      c.fillStyle='rgba(0,0,0,.06)';oval(c,x,y+6,30,20);c.fill();
+      // Iris (big anime iris)
+      var ig=grad(c,x+3,y-4,22,'#5a3018','#2a1008');
+      c.fillStyle=ig;circle(c,x+3,y+3,16);c.fill();
+      // Iris ring
+      c.strokeStyle='rgba(255,200,100,.25)';c.lineWidth=2;circle(c,x+3,y+3,16);c.stroke();
       // Pupil
-      c.fillStyle='#0a0604';circle(c,x+4,y+2,6);c.fill();
-      // Highlights
-      c.fillStyle='#fff';circle(c,x+9,y-4,5);c.fill();
-      circle(c,x+1,y+6,2.5);c.fill();
-      // Upper lid line
-      c.strokeStyle='rgba(80,50,30,.4)';c.lineWidth=2;c.beginPath();c.arc(x,y,24,-0.4,Math.PI+0.4);c.stroke();
+      c.fillStyle='#0a0604';circle(c,x+3,y+3,7);c.fill();
+      // Highlights (anime sparkle)
+      c.fillStyle='rgba(255,255,255,.95)';circle(c,x+10,y-6,6);c.fill();
+      circle(c,x-2,y+8,3);c.fill();
+      c.fillStyle='rgba(255,255,255,.5)';circle(c,x+14,y+2,2.5);c.fill();
+      // Upper lid line (thick anime)
+      c.strokeStyle='rgba(60,30,15,.5)';c.lineWidth=3;c.beginPath();c.arc(x,y,30,-0.5,Math.PI+0.5);c.stroke();
+      // Lower lash
+      c.strokeStyle='rgba(60,30,15,.2)';c.lineWidth=1.5;c.beginPath();c.arc(x,y+2,28,0.3,Math.PI-0.3);c.stroke();
     });
   },
   eyes_anime:function(c){
-    [[-32,0],[32,0]].forEach(function(p){
-      var x=HX+p[0],y=HY-8;
-      c.fillStyle='#fff';oval(c,x,y,30,26);c.fill();
-      c.fillStyle='#2a1008';oval(c,x+3,y+2,18,20);c.fill();
-      c.fillStyle='#1a0804';oval(c,x+3,y+2,10,12);c.fill();
-      c.fillStyle='#fff';circle(c,x+10,y-6,6);c.fill();
-      circle(c,x-2,y+8,3);c.fill();
+    [[-38,0],[38,0]].forEach(function(p){
+      var x=HX+p[0],y=HY-HR*0.05;
+      c.fillStyle='#fff';oval(c,x,y,36,32);c.fill();
+      var ig=grad(c,x+4,y-6,26,'#6a3018','#1a0804');
+      c.fillStyle=ig;oval(c,x+4,y+4,22,26);c.fill();
+      c.fillStyle='#0a0604';oval(c,x+4,y+4,12,14);c.fill();
+      c.fillStyle='rgba(255,255,255,.95)';circle(c,x+12,y-8,7);c.fill();
+      circle(c,x-3,y+10,3.5);c.fill();
+      c.fillStyle='rgba(255,255,255,.4)';circle(c,x+16,y-2,3);c.fill();
       // Sparkle
-      c.fillStyle='rgba(255,255,255,.3)';circle(c,x+14,y-10,2);c.fill();
+      c.fillStyle='rgba(255,255,255,.25)';circle(c,x+18,y-14,2.5);c.fill();
+      // Thick upper lid
+      c.strokeStyle='rgba(40,20,10,.6)';c.lineWidth=3.5;c.beginPath();c.arc(x,y,34,-0.5,Math.PI+0.5);c.stroke();
     });
   },
   eyes_angry:function(c){
-    [[-32,0],[32,0]].forEach(function(p,i){
-      var x=HX+p[0],y=HY-8;
-      c.fillStyle='#fff';oval(c,x,y+2,24,16);c.fill();
-      c.fillStyle='#3a2010';circle(c,x+3,y+4,10);c.fill();
-      c.fillStyle='#0a0604';circle(c,x+3,y+4,5);c.fill();
-      c.fillStyle='#fff';circle(c,x+7,y,3.5);c.fill();
-      // Angry brow
+    [[-38,0],[38,0]].forEach(function(p,i){
+      var x=HX+p[0],y=HY-HR*0.05;
+      c.fillStyle='#fff';oval(c,x,y+3,28,20);c.fill();
+      var ig=grad(c,x,y,18,'#5a3018','#2a1008');
+      c.fillStyle=ig;circle(c,x+3,y+5,13);c.fill();
+      c.fillStyle='#0a0604';circle(c,x+3,y+5,6);c.fill();
+      c.fillStyle='rgba(255,255,255,.9)';circle(c,x+8,y,4);c.fill();
+      // Angry brow (thick anime)
       c.fillStyle=SK5;c.beginPath();
-      if(i===0){c.moveTo(x-22,y-20);c.lineTo(x+22,y-14);c.lineTo(x+22,y-8);c.lineTo(x-22,y-14)}
-      else{c.moveTo(x+22,y-20);c.lineTo(x-22,y-14);c.lineTo(x-22,y-8);c.lineTo(x+22,y-14)}
+      if(i===0){c.moveTo(x-28,y-24);c.lineTo(x+26,y-16);c.lineTo(x+26,y-8);c.lineTo(x-28,y-16)}
+      else{c.moveTo(x+28,y-24);c.lineTo(x-26,y-16);c.lineTo(x-26,y-8);c.lineTo(x+28,y-16)}
       c.fill();
     });
   },
   eyes_happy:function(c){
-    [[-32,0],[32,0]].forEach(function(p){
-      var x=HX+p[0],y=HY-8;
-      c.strokeStyle=SK5;c.lineWidth=4;c.lineCap='round';
-      c.beginPath();c.arc(x,y-4,18,0.2,Math.PI-0.2);c.stroke();
+    [[-38,0],[38,0]].forEach(function(p){
+      var x=HX+p[0],y=HY-HR*0.05;
+      c.strokeStyle=SK5;c.lineWidth=4.5;c.lineCap='round';
+      c.beginPath();c.arc(x,y-6,22,0.25,Math.PI-0.25);c.stroke();
+      // Lash marks
+      c.strokeStyle='rgba(60,30,15,.3)';c.lineWidth=2;
+      c.beginPath();c.moveTo(x-18,y-20);c.lineTo(x-14,y-26);c.stroke();
+      c.beginPath();c.moveTo(x-22,y-14);c.lineTo(x-20,y-20);c.stroke();
+      c.beginPath();c.moveTo(x+18,y-20);c.lineTo(x+14,y-26);c.stroke();
+      c.beginPath();c.moveTo(x+22,y-14);c.lineTo(x+20,y-20);c.stroke();
     });
   },
-  eyes_star:function(c){[-32,32].forEach(function(dx){star5(c,HX+dx,HY-8,22,10,'#C19200')})},
+  eyes_star:function(c){[-38,38].forEach(function(dx){star5(c,HX+dx,HY-HR*0.05,28,12,'#C19200')})},
   eyes_heart:function(c){
-    [[-32,0],[32,0]].forEach(function(p){
-      var x=HX+p[0],y=HY-8;
-      c.fillStyle='#e03050';c.beginPath();c.moveTo(x,y+16);
-      c.bezierCurveTo(x-24,y-6,x-14,y-24,x,y-10);
-      c.bezierCurveTo(x+14,y-24,x+24,y-6,x,y+16);c.fill();
-      c.fillStyle='rgba(255,255,255,.3)';circle(c,x-6,y-6,4);c.fill();
+    [[-38,0],[38,0]].forEach(function(p){
+      var x=HX+p[0],y=HY-HR*0.05;
+      c.fillStyle='#e03050';c.beginPath();c.moveTo(x,y+20);
+      c.bezierCurveTo(x-30,y-8,x-18,y-30,x,y-14);
+      c.bezierCurveTo(x+18,y-30,x+30,y-8,x,y+20);c.fill();
+      c.fillStyle='rgba(255,255,255,.35)';circle(c,x-8,y-8,5);c.fill();
     });
   },
   eyes_robot:function(c){
-    [[-32,0],[32,0]].forEach(function(p){
-      var x=HX+p[0],y=HY-8;
-      c.fillStyle='#8ac';rrect(c,x-22,y-16,44,32,6);c.fill();
-      c.strokeStyle='#4a8ab0';c.lineWidth=2;rrect(c,x-22,y-16,44,32,6);c.stroke();
-      c.fillStyle='#0ff';c.fillRect(x-14,y-8,14,10);c.fillRect(x+2,y-8,14,10);
-      c.fillStyle='rgba(0,255,255,.15)';c.fillRect(x-22,y-16,44,32);
+    [[-38,0],[38,0]].forEach(function(p){
+      var x=HX+p[0],y=HY-HR*0.05;
+      c.fillStyle='#8ac';rrect(c,x-28,y-20,56,40,8);c.fill();
+      c.strokeStyle='#4a8ab0';c.lineWidth=2.5;rrect(c,x-28,y-20,56,40,8);c.stroke();
+      c.fillStyle='#0ff';c.fillRect(x-18,y-10,16,12);c.fillRect(x+4,y-10,16,12);
+      c.fillStyle='rgba(0,255,255,.12)';c.fillRect(x-28,y-20,56,40);
+      // Scan line
+      c.strokeStyle='rgba(0,255,255,.2)';c.lineWidth=1;
+      c.beginPath();c.moveTo(x-26,y-6);c.lineTo(x+26,y-6);c.stroke();
     });
     // Visor line
-    c.strokeStyle='rgba(0,255,255,.3)';c.lineWidth=2;c.beginPath();c.moveTo(HX-56,HY-10);c.lineTo(HX+56,HY-10);c.stroke();
+    c.strokeStyle='rgba(0,255,255,.25)';c.lineWidth=2;c.beginPath();c.moveTo(HX-68,HY-HR*0.07);c.lineTo(HX+68,HY-HR*0.07);c.stroke();
   },
   eyes_wink:function(c){
-    // Left open
-    var x=HX-32,y=HY-8;
-    c.fillStyle='#fff';oval(c,x,y,26,20);c.fill();
-    c.fillStyle='#3a2010';circle(c,x+4,y+2,12);c.fill();c.fillStyle='#0a0604';circle(c,x+4,y+2,6);c.fill();
-    c.fillStyle='#fff';circle(c,x+9,y-4,5);c.fill();circle(c,x+1,y+6,2.5);c.fill();
+    // Left open (big anime)
+    var x=HX-38,y=HY-HR*0.05;
+    c.fillStyle='#fff';oval(c,x,y,32,26);c.fill();
+    var ig=grad(c,x,y,20,'#5a3018','#2a1008');
+    c.fillStyle=ig;circle(c,x+3,y+3,16);c.fill();
+    c.fillStyle='#0a0604';circle(c,x+3,y+3,7);c.fill();
+    c.fillStyle='rgba(255,255,255,.95)';circle(c,x+10,y-6,6);c.fill();
+    circle(c,x-2,y+8,3);c.fill();
     // Right wink
-    c.strokeStyle=SK5;c.lineWidth=4;c.lineCap='round';
-    c.beginPath();c.arc(HX+32,y-4,18,0.2,Math.PI-0.2);c.stroke();
+    c.strokeStyle=SK5;c.lineWidth=4.5;c.lineCap='round';
+    c.beginPath();c.arc(HX+38,y-6,22,0.25,Math.PI-0.25);c.stroke();
   },
 
   // ─── MOUTH ───
-  mouth_smile:function(c){c.strokeStyle=SK3;c.lineWidth=3.5;c.lineCap='round';c.beginPath();c.arc(HX,HY+62,20,0.15,Math.PI-0.15);c.stroke()},
-  mouth_grin:function(c){c.fillStyle='#3a0808';c.beginPath();c.arc(HX,HY+62,24,0,Math.PI);c.fill();c.fillStyle='#fff';c.fillRect(HX-20,HY+62,40,7);c.fillStyle='#d04040';c.beginPath();c.ellipse(HX,HY+72,12,5,0,0,Math.PI);c.fill()},
-  mouth_smirk:function(c){c.strokeStyle=SK3;c.lineWidth=3.5;c.lineCap='round';c.beginPath();c.moveTo(HX-18,HY+66);c.quadraticCurveTo(HX+5,HY+56,HX+22,HY+62);c.stroke()},
-  mouth_open:function(c){c.fillStyle='#2a0808';oval(c,HX,HY+68,16,22);c.fill();c.fillStyle='#c04040';c.beginPath();c.ellipse(HX,HY+76,11,7,0,0,Math.PI);c.fill()},
-  mouth_tongue:function(c){c.strokeStyle=SK3;c.lineWidth=3.5;c.lineCap='round';c.beginPath();c.arc(HX,HY+62,20,0.15,Math.PI-0.15);c.stroke();c.fillStyle='#d04050';c.beginPath();c.ellipse(HX+2,HY+78,9,12,0,0,Math.PI);c.fill()},
-  mouth_fangs:function(c){c.fillStyle='#3a0808';c.beginPath();c.arc(HX,HY+62,22,0,Math.PI);c.fill();c.fillStyle='#fff';[[-14,HY+62],[14,HY+62]].forEach(function(p){c.beginPath();c.moveTo(p[0]-6,p[1]);c.lineTo(p[0],p[1]+14);c.lineTo(p[0]+6,p[1]);c.fill()})},
+  mouth_smile:function(c){c.strokeStyle=SK3;c.lineWidth=3;c.lineCap='round';c.beginPath();c.arc(HX,HY+HR*0.38,14,0.2,Math.PI-0.2);c.stroke()},
+  mouth_grin:function(c){c.fillStyle='#3a0808';c.beginPath();c.arc(HX,HY+HR*0.38,18,0,Math.PI);c.fill();c.fillStyle='#fff';c.fillRect(HX-15,HY+HR*0.38,30,6);c.fillStyle='#d04040';c.beginPath();c.ellipse(HX,HY+HR*0.44,9,4,0,0,Math.PI);c.fill()},
+  mouth_smirk:function(c){c.strokeStyle=SK3;c.lineWidth=3;c.lineCap='round';c.beginPath();c.moveTo(HX-14,HY+HR*0.4);c.quadraticCurveTo(HX+4,HY+HR*0.33,HX+18,HY+HR*0.38);c.stroke()},
+  mouth_open:function(c){c.fillStyle='#2a0808';oval(c,HX,HY+HR*0.42,12,18);c.fill();c.fillStyle='#c04040';c.beginPath();c.ellipse(HX,HY+HR*0.48,8,5,0,0,Math.PI);c.fill()},
+  mouth_tongue:function(c){c.strokeStyle=SK3;c.lineWidth=3;c.lineCap='round';c.beginPath();c.arc(HX,HY+HR*0.38,14,0.2,Math.PI-0.2);c.stroke();c.fillStyle='#d04050';c.beginPath();c.ellipse(HX+2,HY+HR*0.48,7,10,0,0,Math.PI);c.fill()},
+  mouth_fangs:function(c){c.fillStyle='#3a0808';c.beginPath();c.arc(HX,HY+HR*0.38,16,0,Math.PI);c.fill();c.fillStyle='#fff';[[-11,HY+HR*0.38],[11,HY+HR*0.38]].forEach(function(p){c.beginPath();c.moveTo(p[0]-5,p[1]);c.lineTo(p[0],p[1]+12);c.lineTo(p[0]+5,p[1]);c.fill()})},
 
   // ─── BEARD ───
   beard_stubble:function(c){c.fillStyle='rgba(50,30,15,.25)';for(var i=0;i<80;i++){var a=Math.random()*Math.PI,r=HR*(0.35+Math.random()*0.55);var x=HX+Math.cos(a-Math.PI/2)*r*0.75,y=HY+HR*0.5+Math.sin(a)*r*0.45;circle(c,x,y,1.5+Math.random());c.fill()}},
@@ -288,48 +307,46 @@ var D={
 
   // ─── GLASSES ───
   glasses_round:function(c){
-    var y=HY-6;c.strokeStyle='#3a3a3a';c.lineWidth=4.5;c.fillStyle='rgba(200,210,230,.12)';
-    [-32,32].forEach(function(dx){circle(c,HX+dx,y,24);c.fill();c.stroke()});
-    c.beginPath();c.moveTo(HX-8,y);c.lineTo(HX+8,y);c.stroke();
-    c.beginPath();c.moveTo(HX-56,y);c.lineTo(HX-58,y-12);c.stroke();
-    c.beginPath();c.moveTo(HX+56,y);c.lineTo(HX+58,y-12);c.stroke();
-    // Lens shine
-    c.fillStyle='rgba(255,255,255,.08)';[-32,32].forEach(function(dx){c.beginPath();c.arc(HX+dx-6,y-8,10,0,Math.PI*2);c.fill()});
+    var y=HY-HR*0.03;c.strokeStyle='#3a3a3a';c.lineWidth=4.5;c.fillStyle='rgba(200,210,230,.12)';
+    [-38,38].forEach(function(dx){circle(c,HX+dx,y,28);c.fill();c.stroke()});
+    c.beginPath();c.moveTo(HX-10,y);c.lineTo(HX+10,y);c.stroke();
+    c.beginPath();c.moveTo(HX-66,y);c.lineTo(HX-68,y-14);c.stroke();
+    c.beginPath();c.moveTo(HX+66,y);c.lineTo(HX+68,y-14);c.stroke();
+    c.fillStyle='rgba(255,255,255,.08)';[-38,38].forEach(function(dx){c.beginPath();c.arc(HX+dx-8,y-10,12,0,Math.PI*2);c.fill()});
   },
   glasses_aviator:function(c){
-    var y=HY-4;c.strokeStyle='#8a7a50';c.lineWidth=3.5;c.fillStyle='rgba(60,50,30,.35)';
-    [-32,32].forEach(function(dx){
-      c.beginPath();c.moveTo(HX+dx-26,y-18);c.quadraticCurveTo(HX+dx-30,y+20,HX+dx-10,y+24);
-      c.quadraticCurveTo(HX+dx+12,y+20,HX+dx+26,y-10);c.quadraticCurveTo(HX+dx+22,y-22,HX+dx-26,y-18);c.fill();c.stroke();
+    var y=HY-HR*0.02;c.strokeStyle='#8a7a50';c.lineWidth=3.5;c.fillStyle='rgba(60,50,30,.35)';
+    [-38,38].forEach(function(dx){
+      c.beginPath();c.moveTo(HX+dx-30,y-22);c.quadraticCurveTo(HX+dx-34,y+24,HX+dx-12,y+28);
+      c.quadraticCurveTo(HX+dx+14,y+24,HX+dx+30,y-12);c.quadraticCurveTo(HX+dx+26,y-26,HX+dx-30,y-22);c.fill();c.stroke();
     });
-    c.beginPath();c.moveTo(HX-6,y-5);c.lineTo(HX+6,y-5);c.stroke();
-    c.beginPath();c.moveTo(HX-58,y-10);c.lineTo(HX-60,y-18);c.stroke();
-    c.beginPath();c.moveTo(HX+58,y-10);c.lineTo(HX+60,y-18);c.stroke();
+    c.beginPath();c.moveTo(HX-8,y-6);c.lineTo(HX+8,y-6);c.stroke();
+    c.beginPath();c.moveTo(HX-68,y-12);c.lineTo(HX-70,y-22);c.stroke();
+    c.beginPath();c.moveTo(HX+68,y-12);c.lineTo(HX+70,y-22);c.stroke();
   },
   glasses_square:function(c){
-    var y=HY-6;c.strokeStyle='#4a3a2a';c.lineWidth=5;c.fillStyle='rgba(180,160,120,.1)';
-    [-32,32].forEach(function(dx){rrect(c,HX+dx-26,y-18,52,36,6);c.fill();c.stroke()});
-    c.beginPath();c.moveTo(HX-6,y);c.lineTo(HX+6,y);c.stroke();
+    var y=HY-HR*0.03;c.strokeStyle='#4a3a2a';c.lineWidth=5;c.fillStyle='rgba(180,160,120,.1)';
+    [-38,38].forEach(function(dx){rrect(c,HX+dx-30,y-22,60,42,8);c.fill();c.stroke()});
+    c.beginPath();c.moveTo(HX-8,y);c.lineTo(HX+8,y);c.stroke();
   },
   glasses_sunglasses:function(c){
-    var y=HY-5;c.strokeStyle='#1a1a1a';c.lineWidth=5.5;c.fillStyle='rgba(10,10,20,.75)';
-    [-32,32].forEach(function(dx){
-      c.beginPath();c.moveTo(HX+dx-26,y-12);c.lineTo(HX+dx+26,y-12);
-      c.quadraticCurveTo(HX+dx+30,y+20,HX+dx+12,y+22);c.lineTo(HX+dx-12,y+22);
-      c.quadraticCurveTo(HX+dx-30,y+20,HX+dx-26,y-12);c.fill();c.stroke();
-      // Shine
-      c.fillStyle='rgba(255,255,255,.06)';c.beginPath();c.ellipse(HX+dx-8,y-4,12,6,-0.3,0,Math.PI*2);c.fill();
+    var y=HY-HR*0.02;c.strokeStyle='#1a1a1a';c.lineWidth=5.5;c.fillStyle='rgba(10,10,20,.75)';
+    [-38,38].forEach(function(dx){
+      c.beginPath();c.moveTo(HX+dx-30,y-14);c.lineTo(HX+dx+30,y-14);
+      c.quadraticCurveTo(HX+dx+34,y+24,HX+dx+14,y+26);c.lineTo(HX+dx-14,y+26);
+      c.quadraticCurveTo(HX+dx-34,y+24,HX+dx-30,y-14);c.fill();c.stroke();
+      c.fillStyle='rgba(255,255,255,.06)';c.beginPath();c.ellipse(HX+dx-10,y-5,14,7,-0.3,0,Math.PI*2);c.fill();
       c.fillStyle='rgba(10,10,20,.75)';
     });
-    c.beginPath();c.moveTo(HX-6,y-5);c.lineTo(HX+6,y-5);c.stroke();
-    c.lineWidth=4.5;c.beginPath();c.moveTo(HX-58,y-6);c.lineTo(HX-62,y-14);c.stroke();
-    c.beginPath();c.moveTo(HX+58,y-6);c.lineTo(HX+62,y-14);c.stroke();
+    c.beginPath();c.moveTo(HX-8,y-6);c.lineTo(HX+8,y-6);c.stroke();
+    c.lineWidth=4.5;c.beginPath();c.moveTo(HX-68,y-8);c.lineTo(HX-72,y-18);c.stroke();
+    c.beginPath();c.moveTo(HX+68,y-8);c.lineTo(HX+72,y-18);c.stroke();
   },
   glasses_monocle:function(c){
-    var y=HY-6;c.strokeStyle='#C19200';c.lineWidth=3.5;c.fillStyle='rgba(200,210,230,.08)';
-    circle(c,HX+32,y,24);c.fill();c.stroke();
+    var y=HY-HR*0.03;c.strokeStyle='#C19200';c.lineWidth=3.5;c.fillStyle='rgba(200,210,230,.08)';
+    circle(c,HX+38,y,28);c.fill();c.stroke();
     c.strokeStyle='rgba(193,146,0,.4)';c.lineWidth=2;c.beginPath();
-    c.moveTo(HX+32,y+24);c.quadraticCurveTo(HX+20,y+80,HX+10,HY+HR*0.95);c.stroke();
+    c.moveTo(HX+38,y+28);c.quadraticCurveTo(HX+24,y+90,HX+14,HY+HR*0.95);c.stroke();
   },
 
   // ─── HAIR ───
