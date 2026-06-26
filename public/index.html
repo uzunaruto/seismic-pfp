@@ -184,126 +184,12 @@ const OVERLAY_CATS = new Set(['Clothes','Tattoo','Eyes','Eyebrow','Glasses','Wea
 
 const state = {};
 const rawImages = {};
-const cleanImages = {}; // green-screen-removed versions
 let activeCat = 'Background';
 let loaded = 0;
 let total = Object.values(ITEM_COUNTS).reduce((a,b)=>a+b,0);
 
-// Edge flood-fill: BFS from border, only remove bg pixels connected to edges
-// With body protection: dark/colored pixels form a barrier the flood can't cross
-function removeBackground(srcImg) {
-  const c = document.createElement('canvas');
-  const S = 512;
-  c.width = S; c.height = S;
-  const ctx = c.getContext('2d');
-  ctx.drawImage(srcImg, 0, 0, S, S);
-  
-  const imgData = ctx.getImageData(0, 0, S, S);
-  const d = imgData.data;
-  const W = S, H = S;
-  const N = W * H;
-  
-  const idx = (x, y) => (y * W + x) * 4;
-  
-  // Step 1: Build body mask — pixels that are clearly NOT background
-  // Body = any pixel where brightness < 200 OR has significant color saturation
-  const isBody = new Uint8Array(N);
-  for (let i = 0; i < N; i++) {
-    const pi4 = i * 4;
-    const r = d[pi4], g = d[pi4+1], b = d[pi4+2];
-    const brightness = (r + g + b) / 3;
-    const maxC = Math.max(r, g, b), minC = Math.min(r, g, b);
-    const saturation = maxC > 0 ? (maxC - minC) / maxC : 0;
-    
-    // Clearly body pixel: dark or saturated
-    if (brightness < 180 || (saturation > 0.15 && brightness < 220)) {
-      isBody[i] = 1;
-    }
-  }
-  
-  // Step 2: Dilate body mask by 4px — creates protection zone around character
-  const protected_ = new Uint8Array(isBody); // copy
-  const dilateRadius = 4;
-  for (let y = 0; y < H; y++) {
-    for (let x = 0; x < W; x++) {
-      const pi = y * W + x;
-      if (!isBody[pi]) continue;
-      // Mark surrounding pixels as protected
-      for (let dy = -dilateRadius; dy <= dilateRadius; dy++) {
-        for (let dx = -dilateRadius; dx <= dilateRadius; dx++) {
-          if (dx*dx + dy*dy > dilateRadius*dilateRadius) continue; // circular
-          const nx = x + dx, ny = y + dy;
-          if (nx >= 0 && nx < W && ny >= 0 && ny < H) {
-            protected_[ny * W + nx] = 1;
-          }
-        }
-      }
-    }
-  }
-  
-  // Step 3: Helper — is pixel background-like AND not protected?
-  const isBgLike = (x, y) => {
-    const pi = y * W + x;
-    if (protected_[pi]) return false; // near character body — don't flood
-    const pi4 = pi * 4;
-    const r = d[pi4], g = d[pi4+1], b = d[pi4+2], a = d[pi4+3];
-    if (a === 0) return true;
-    const dist = Math.sqrt((255-r)**2 + (255-g)**2 + (255-b)**2);
-    return dist < 60;
-  };
-  
-  // Step 4: BFS from all border pixels
-  const visited = new Uint8Array(N);
-  const queue = [];
-  
-  for (let x = 0; x < W; x++) {
-    for (const y of [0, H-1]) {
-      if (isBgLike(x, y)) { const pi = y * W + x; visited[pi] = 1; queue.push(pi); }
-    }
-  }
-  for (let y = 0; y < H; y++) {
-    for (const x of [0, W-1]) {
-      if (isBgLike(x, y)) { const pi = y * W + x; if (!visited[pi]) { visited[pi] = 1; queue.push(pi); } }
-    }
-  }
-  
-  let head = 0;
-  const dirs = [-1, 0, 1, 0, 0, -1, 0, 1];
-  while (head < queue.length) {
-    const pi = queue[head++];
-    const px = pi % W, py = (pi / W) | 0;
-    for (let d2 = 0; d2 < 8; d2 += 2) {
-      const nx = px + dirs[d2], ny = py + dirs[d2+1];
-      if (nx < 0 || nx >= W || ny < 0 || ny >= H) continue;
-      const npi = ny * W + nx;
-      if (visited[npi]) continue;
-      if (isBgLike(nx, ny)) {
-        visited[npi] = 1;
-        queue.push(npi);
-      }
-    }
-  }
-  
-  // Step 5: Mark flood-filled pixels as transparent + soften edges
-  for (let i = 0; i < N; i++) {
-    if (visited[i]) {
-      const pi4 = i * 4;
-      const r = d[pi4], g = d[pi4+1], b = d[pi4+2];
-      const dist = Math.sqrt((255-r)**2 + (255-g)**2 + (255-b)**2);
-      if (dist < 20) {
-        d[pi4+3] = 0;
-      } else {
-        d[pi4+3] = Math.round((dist / 60) * 255);
-      }
-    }
-  }
-  
-  ctx.putImageData(imgData, 0, 0);
-  
-  const out = new Image();
-  out.src = c.toDataURL();
-  return out;
-}
+// Images are pre-processed with ML-based background removal (rembg/u2net)
+// No client-side removal needed — just draw directly
 
 function preloadImages() {
   CATEGORIES.forEach(cat => {
@@ -314,8 +200,6 @@ function preloadImages() {
       img.crossOrigin = 'anonymous';
       img.onload = () => {
         rawImages[key] = img;
-        // Process ALL images (including Model) with edge flood-fill
-        cleanImages[key] = removeBackground(img);
         loaded++;
         if (loaded >= total) {
           document.getElementById('loadingOverlay').style.display = 'none';
@@ -412,8 +296,7 @@ function selectItem(catKey, itemId) {
 
 function drawLayer(ctx, catKey, itemId, size) {
   const key = `${catKey}/${itemId}`;
-  // Always use clean (background-removed) version
-  const img = cleanImages[key] || rawImages[key];
+  const img = rawImages[key];
   if (img && img.complete && img.naturalWidth > 0) {
     ctx.drawImage(img, 0, 0, size, size);
   }
