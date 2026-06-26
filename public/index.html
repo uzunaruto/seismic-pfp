@@ -222,12 +222,12 @@ function preloadThumbnails() {
         rawImages[key] = img;
         loaded++;
         if (loaded >= total) {
-          render(); // initial render from thumbnails while waiting for generation
+          renderCachedOrThumb(); // initial render from thumbnails while generation starts
         }
       };
       img.onerror = () => {
         loaded++;
-        if (loaded >= total) render();
+        if (loaded >= total) renderCachedOrThumb();
       };
       img.src = `/pfp/${cat.key}/${i}.png`;
     }
