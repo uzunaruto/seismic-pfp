@@ -45,12 +45,19 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 @keyframes glow-breathe{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.02)}}
 .preview-frame{position:relative;z-index:1;width:320px;height:320px;border-radius:50%;overflow:hidden;border:3px solid rgba(193,146,0,.2);box-shadow:0 16px 48px rgba(0,0,0,.5),0 0 30px rgba(193,146,0,.06)}
 .preview-frame canvas{width:100%;height:100%;display:block}
+.gen-overlay{position:absolute;inset:0;background:rgba(6,5,4,.85);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:10;border-radius:50%}
+.gen-overlay.active{display:flex}
+.gen-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gen-text{font-size:11px;color:var(--text3);text-align:center}
+.gen-dots{font-size:11px;color:var(--accent);min-width:60px;text-align:center}
 .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .25s;background:var(--glass);color:var(--text2);letter-spacing:.3px}
 .btn:hover{transform:translateY(-2px);border-color:var(--border);color:var(--text);box-shadow:0 6px 20px rgba(0,0,0,.3)}
 .btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent3));color:#000;border-color:transparent;font-weight:700}
 .btn-primary:hover{box-shadow:0 10px 28px rgba(193,146,0,.35);transform:translateY(-3px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important}
 .controls-col{display:flex;flex-direction:column;gap:14px}
 .cat-tabs{display:flex;flex-wrap:wrap;gap:6px;padding:12px 14px;background:var(--glass);border:1px solid var(--border2);border-radius:var(--radius)}
 .cat-tab{padding:7px 12px;border-radius:var(--radius-xs);border:1px solid var(--border2);background:var(--bg3);color:var(--text3);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.3px;white-space:nowrap}
@@ -75,10 +82,6 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .footer{position:relative;z-index:1;text-align:center;padding:24px;border-top:1px solid var(--border2);margin-top:40px}
 .footer p{font-size:11px;color:var(--text3)}
 .footer a{color:var(--accent);text-decoration:none;font-weight:600}
-.loading{position:absolute;inset:0;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:10}
-.loading-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:10px;color:var(--text3);margin-top:8px;text-align:center}
 @media(max-width:900px){
   .layout{grid-template-columns:1fr;gap:20px}
   .preview-col{position:static}
@@ -112,8 +115,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
         <div class="preview-glow"></div>
         <div class="preview-frame">
           <canvas id="previewCanvas" width="800" height="800"></canvas>
-          <div class="loading" id="loadingOverlay">
-            <div><div class="loading-spinner"></div><div class="loading-text">Loading traits...</div></div>
+          <div class="gen-overlay" id="genOverlay">
+            <div class="gen-spinner"></div>
+            <div class="gen-text">Generating character...</div>
+            <div class="gen-dots" id="genDots">0s</div>
           </div>
         </div>
       </div>
@@ -179,19 +184,34 @@ const LABELS = {
   Hair:{1:'Spiky',2:'Flowing',3:'Mohawk',4:'Afro',5:'Pigtails',6:'Slick',7:'Messy',8:'Bald',9:'Braids',10:'Rainbow'},
 };
 
-// Categories that need green screen removal (overlays, not base layers)
-const OVERLAY_CATS = new Set(['Clothes','Tattoo','Eyes','Eyebrow','Glasses','Weapon','Hat','Mouth','Hair']);
+// Model descriptions for prompt building
+const MODEL_DESC = {
+  1: 'a rock golem character with stone texture body',
+  2: 'a shiny chrome robot character with metallic body',
+  3: 'a cute cat character with fur and whiskers',
+  4: 'a skull character with bone texture',
+  5: 'an alien character with green skin and antennae',
+  6: 'a ninja character in black outfit with mask',
+  7: 'a pirate character with eyepatch and bandana',
+  8: 'a wizard character with long beard and robes',
+};
+
+const STYLE = '3D render Pixar chibi style, half-body chest-up portrait, cute animated character, smooth shading, thick outlines, high quality digital art';
+
+const CACHE_PREFIX = 'pfpv3_';
+const CACHE_MAX = 200;
 
 const state = {};
-const rawImages = {};
+const rawImages = {}; // thumbnails for selection grid only
 let activeCat = 'Background';
 let loaded = 0;
 let total = Object.values(ITEM_COUNTS).reduce((a,b)=>a+b,0);
+let generating = false;
+let genAbort = null;
+let genTimer = null;
+let lastRenderedKey = '';
 
-// Images are pre-processed with ML-based background removal (rembg/u2net)
-// No client-side removal needed — just draw directly
-
-function preloadImages() {
+function preloadThumbnails() {
   CATEGORIES.forEach(cat => {
     const count = ITEM_COUNTS[cat.key];
     for (let i = 1; i <= count; i++) {
@@ -202,17 +222,12 @@ function preloadImages() {
         rawImages[key] = img;
         loaded++;
         if (loaded >= total) {
-          document.getElementById('loadingOverlay').style.display = 'none';
-          render();
+          render(); // initial render from thumbnails while waiting for generation
         }
       };
       img.onerror = () => {
         loaded++;
-        rawImages[key] = null;
-        if (loaded >= total) {
-          document.getElementById('loadingOverlay').style.display = 'none';
-          render();
-        }
+        if (loaded >= total) render();
       };
       img.src = `/pfp/${cat.key}/${i}.png`;
     }
@@ -234,7 +249,7 @@ function init() {
   });
 
   buildTraitGrid();
-  preloadImages();
+  preloadThumbnails();
 }
 
 function switchCategory(key) {
@@ -291,39 +306,280 @@ function buildTraitGrid() {
 function selectItem(catKey, itemId) {
   state[catKey] = itemId;
   buildTraitGrid();
-  render();
-}
-
-function drawLayer(ctx, catKey, itemId, size) {
-  const key = `${catKey}/${itemId}`;
-  const img = rawImages[key];
-  if (img && img.complete && img.naturalWidth > 0) {
-    ctx.drawImage(img, 0, 0, size, size);
+  
+  if (catKey === 'Background') {
+    // Background just redraws from cache/thumbnails
+    renderCachedOrThumb();
+  } else {
+    // Trait/model change → generate new character
+    generateCharacter();
   }
 }
 
-function render() {
+// Build cache key from current state
+function getCacheKey() {
+  const parts = CATEGORIES
+    .filter(c => c.key !== 'Background')
+    .map(c => `${c.key}${state[c.key] || 0}`);
+  return CACHE_PREFIX + parts.join('_');
+}
+
+// Build prompt from current state
+function buildPrompt() {
+  const modelId = state['Model'] || 1;
+  const modelDesc = MODEL_DESC[modelId] || MODEL_DESC[1];
+  
+  const traits = [];
+  const traitCats = ['Clothes','Tattoo','Eyes','Eyebrow','Glasses','Weapon','Hat','Mouth','Hair'];
+  traitCats.forEach(cat => {
+    const itemId = state[cat];
+    if (itemId) {
+      const label = LABELS[cat]?.[itemId] || '';
+      if (label) {
+        const catLower = cat.toLowerCase();
+        traits.push(`${label.toLowerCase()} ${catLower}`);
+      }
+    }
+  });
+  
+  const bgId = state['Background'] || 1;
+  const bgLabel = (LABELS['Background']?.[bgId] || 'space').toLowerCase();
+  const bgPrompt = bgLabel === 'space' ? 'deep space nebula with stars' :
+    bgLabel === 'lava' ? 'volcanic lava and magma' :
+    bgLabel === 'ocean' ? 'deep ocean underwater with coral' :
+    bgLabel === 'forest' ? 'enchanted magical forest' :
+    bgLabel === 'cyber' ? 'neon cyberpunk city' :
+    bgLabel === 'sakura' ? 'cherry blossom sakura petals' :
+    bgLabel === 'ice' ? 'aurora borealis ice crystals' :
+    bgLabel === 'desert' ? 'golden desert sunset dunes' :
+    bgLabel === 'candy' ? 'colorful candy and sweets' :
+    bgLabel === 'haunted' ? 'spooky haunted house' : 'abstract background';
+  
+  let prompt = `${STYLE}, ${modelDesc}`;
+  if (traits.length > 0) {
+    prompt += ` wearing ${traits.join(', ')}`;
+  }
+  prompt += `, solid flat pure black background`;
+  
+  return { prompt, bgPrompt };
+}
+
+// Remove near-black pixels from generated image (black background removal)
+function removeBlackBg(img) {
+  const c = document.createElement('canvas');
+  const S = 512;
+  c.width = S; c.height = S;
+  const ctx = c.getContext('2d');
+  ctx.drawImage(img, 0, 0, S, S);
+  
+  const imgData = ctx.getImageData(0, 0, S, S);
+  const d = imgData.data;
+  
+  for (let i = 0; i < d.length; i += 4) {
+    const r = d[i], g = d[i+1], b = d[i+2];
+    // Near-black → transparent
+    if (r < 30 && g < 30 && b < 30) {
+      d[i+3] = 0;
+    }
+    // Semi-dark → semi-transparent (anti-alias)
+    else if (r < 50 && g < 50 && b < 50) {
+      const brightness = (r + g + b) / 3;
+      d[i+3] = Math.round((brightness / 50) * 255);
+    }
+  }
+  
+  ctx.putImageData(imgData, 0, 0);
+  return c;
+}
+
+// Generate background image from Pollinations
+async function generateBg(bgPrompt) {
+  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(bgPrompt + ', digital art, vibrant, high quality, 512x512')}?width=512&height=512&seed=42&nologo=true`;
+  const resp = await fetch(url);
+  const blob = await resp.blob();
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.src = URL.createObjectURL(blob);
+  });
+}
+
+// Generate character via Pollinations API
+async function generateCharacter() {
+  const cacheKey = getCacheKey();
+  
+  // Check cache first
+  const cached = localStorage.getItem(cacheKey);
+  if (cached) {
+    renderFromCache(cached);
+    return;
+  }
+  
+  // Cancel previous generation
+  if (genAbort) genAbort.abort();
+  genAbort = new AbortController();
+  
+  generating = true;
+  showGenOverlay(true);
+  
+  const { prompt, bgPrompt } = buildPrompt();
+  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&seed=${Math.floor(Math.random()*10000)}&nologo=true`;
+  
+  let elapsed = 0;
+  genTimer = setInterval(() => {
+    elapsed++;
+    const dots = document.getElementById('genDots');
+    if (dots) dots.textContent = `${elapsed}s`;
+  }, 1000);
+  
+  try {
+    const resp = await fetch(url, { signal: genAbort.signal });
+    const blob = await resp.blob();
+    
+    const img = new Image();
+    img.onload = () => {
+      // Remove black background
+      const charCanvas = removeBlackBg(img);
+      
+      // Cache as data URL
+      const dataUrl = charCanvas.toDataURL('image/png');
+      try {
+        localStorage.setItem(cacheKey, dataUrl);
+        pruneCache();
+      } catch(e) { /* quota exceeded, skip */ }
+      
+      // Render
+      renderComposite(charCanvas);
+      showGenOverlay(false);
+      generating = false;
+      lastRenderedKey = cacheKey;
+    };
+    img.src = URL.createObjectURL(blob);
+  } catch(e) {
+    if (e.name !== 'AbortError') {
+      console.error('Generation failed:', e);
+      showToast('⚠️ Generation failed, try again');
+    }
+    showGenOverlay(false);
+    generating = false;
+  }
+  
+  clearInterval(genTimer);
+}
+
+// Render from cached data URL
+function renderFromCache(dataUrl) {
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas');
+    c.width = 512; c.height = 512;
+    const ctx = c.getContext('2d');
+    ctx.drawImage(img, 0, 0, 512, 512);
+    renderComposite(c);
+  };
+  img.src = dataUrl;
+}
+
+// Final render: background + character composite
+async function renderComposite(charCanvas) {
   const canvas = document.getElementById('previewCanvas');
   const ctx = canvas.getContext('2d');
   const S = 800;
   canvas.width = S;
   canvas.height = S;
   ctx.clearRect(0, 0, S, S);
-
+  
+  // Circular clip
   ctx.save();
   ctx.beginPath();
   ctx.arc(S/2, S/2, S/2, 0, Math.PI * 2);
   ctx.clip();
-
-  const layerOrder = [...CATEGORIES].sort((a, b) => a.layer - b.layer);
-  layerOrder.forEach(cat => {
-    const itemId = state[cat.key];
-    if (itemId !== null && itemId !== undefined) {
-      drawLayer(ctx, cat.key, itemId, S);
-    }
-  });
-
+  
+  // Draw background
+  const bgId = state['Background'] || 1;
+  const bgImg = rawImages[`Background/${bgId}`];
+  if (bgImg && bgImg.complete && bgImg.naturalWidth > 0) {
+    ctx.drawImage(bgImg, 0, 0, S, S);
+  } else {
+    // Solid fallback
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, S, S);
+  }
+  
+  // Draw character (centered, slightly offset down)
+  if (charCanvas) {
+    const cw = charCanvas.width || 512;
+    const ch = charCanvas.height || 512;
+    const scale = S / cw;
+    const yOff = 30 * (S / 800); // slight downward offset
+    ctx.drawImage(charCanvas, 0, yOff, cw * scale, ch * scale);
+  }
+  
   ctx.restore();
+}
+
+// Render with just thumbnails (initial state or background-only change)
+function renderCachedOrThumb() {
+  const cacheKey = getCacheKey();
+  const cached = localStorage.getItem(cacheKey);
+  if (cached) {
+    renderFromCache(cached);
+    return;
+  }
+  
+  // Fallback: render model thumbnail + background
+  const canvas = document.getElementById('previewCanvas');
+  const ctx = canvas.getContext('2d');
+  const S = 800;
+  canvas.width = S;
+  canvas.height = S;
+  ctx.clearRect(0, 0, S, S);
+  
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(S/2, S/2, S/2, 0, Math.PI * 2);
+  ctx.clip();
+  
+  // Background
+  const bgId = state['Background'] || 1;
+  const bgImg = rawImages[`Background/${bgId}`];
+  if (bgImg && bgImg.complete && bgImg.naturalWidth > 0) {
+    ctx.drawImage(bgImg, 0, 0, S, S);
+  }
+  
+  // Model thumbnail
+  const modelId = state['Model'] || 1;
+  const modelImg = rawImages[`Model/${modelId}`];
+  if (modelImg && modelImg.complete && modelImg.naturalWidth > 0) {
+    ctx.drawImage(modelImg, 0, 0, S, S);
+  }
+  
+  ctx.restore();
+  
+  // Trigger generation if not already generating
+  if (!generating) generateCharacter();
+}
+
+function showGenOverlay(show) {
+  const overlay = document.getElementById('genOverlay');
+  if (show) {
+    overlay.classList.add('active');
+    const dots = document.getElementById('genDots');
+    if (dots) dots.textContent = '0s';
+  } else {
+    overlay.classList.remove('active');
+  }
+}
+
+function pruneCache() {
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith(CACHE_PREFIX)) keys.push(k);
+  }
+  while (keys.length > CACHE_MAX) {
+    localStorage.removeItem(keys.shift());
+  }
 }
 
 function randomize() {
@@ -332,7 +588,7 @@ function randomize() {
     state[cat.key] = Math.floor(Math.random() * count) + 1;
   });
   buildTraitGrid();
-  render();
+  generateCharacter();
   showToast('🎲 Randomized');
 }
 
@@ -341,7 +597,7 @@ function resetAll() {
     state[cat.key] = (cat.key === 'Background' || cat.key === 'Model') ? 1 : null;
   });
   buildTraitGrid();
-  render();
+  generateCharacter();
   showToast('🔄 Reset');
 }
 
@@ -356,13 +612,9 @@ function downloadPFP() {
   ctx.arc(S/2, S/2, S/2, 0, Math.PI * 2);
   ctx.clip();
 
-  const layerOrder = [...CATEGORIES].sort((a, b) => a.layer - b.layer);
-  layerOrder.forEach(cat => {
-    const itemId = state[cat.key];
-    if (itemId !== null && itemId !== undefined) {
-      drawLayer(ctx, cat.key, itemId, S);
-    }
-  });
+  // Get current preview canvas content
+  const preview = document.getElementById('previewCanvas');
+  ctx.drawImage(preview, 0, 0, S, S);
 
   const link = document.createElement('a');
   link.download = 'seismic-pfp.png';
